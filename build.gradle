@@ -1,0 +1,79 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.4.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.ao'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 10
+
+repositories {
+	mavenCentral()
+}
+
+
+
+compileJava {
+    options.compilerArgs << "-s"
+    options.compilerArgs << "$projectDir/generated/java"
+
+    doFirst {
+        // make sure that directory exists
+        file(new File(projectDir, "/generated/java")).mkdirs()
+    }
+}
+
+clean.doLast {
+    // clean-up directory when necessary
+    file(new File(projectDir, "/generated")).deleteDir()
+}
+
+
+sourceSets {
+    generated {
+        java {
+            srcDir "$projectDir/generated/java"            
+        }
+    }
+    integTest {
+        compileClasspath += main.output + test.output + generated.output
+        runtimeClasspath += main.output + test.output + generated.output
+    }    
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+	compile('io.projectreactor:reactor-core')
+	
+	compile('com.querydsl:querydsl-jpa:4.2.1')
+	compile('com.querydsl:querydsl-apt:4.2.1:jpa')
+	
+	compile('javax.xml.bind:jaxb-api')
+	compile('com.sun.xml.bind:jaxb-impl:2.3.0')
+	compile('com.sun.xml.bind:jaxb-core:2.3.0')
+	compile('javax.activation:activation:1.1.1')
+	
+	runtime('mysql:mysql-connector-java')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+jar {
+	enabled = true	    
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'GBK'
+}

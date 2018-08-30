@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="ScanBisServer">
+		<class>com.ao.entity.AccountExpense</class>
+		<class>com.ao.entity.AccountRecharge</class>
+		<class>com.ao.entity.BaseAccount</class>
+		<class>com.ao.entity.BaseOperator</class>
+		<class>com.ao.entity.StationDevice</class>
+		<class>com.ao.entity.Station_plugInfo</class>
+		<class>com.ao.entity.Station_stationInfo</class>
+		<class>com.ao.entity.User_userInfo</class>
+	</persistence-unit>
+</persistence>
