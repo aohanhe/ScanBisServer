@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,21 +12,8 @@ import java.util.Date;
 @Entity
 @Table(name="base_accounts")
 @NamedQuery(name="BaseAccount.findAll", query="SELECT b FROM BaseAccount b")
-public class BaseAccount implements Serializable {
+public class BaseAccount extends BaseBisEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	private int id;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-
-	private int creator;
-
-	private int modifier;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date moditime;
 
 	private int operatorId;
 
@@ -36,53 +23,15 @@ public class BaseAccount implements Serializable {
 
 	private String regionCode;
 
-	private int status;
+	@Column(columnDefinition="status")
+	private boolean status;
 
 	private String userName;
 
 	public BaseAccount() {
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public int getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(int creator) {
-		this.creator = creator;
-	}
-
-	public int getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(int modifier) {
-		this.modifier = modifier;
-	}
-
-	public Date getModitime() {
-		return this.moditime;
-	}
-
-	public void setModitime(Date moditime) {
-		this.moditime = moditime;
-	}
-
+	
 	public int getOperatorId() {
 		return this.operatorId;
 	}
@@ -115,11 +64,11 @@ public class BaseAccount implements Serializable {
 		this.regionCode = regionCode;
 	}
 
-	public int getStatus() {
+	public boolean getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 

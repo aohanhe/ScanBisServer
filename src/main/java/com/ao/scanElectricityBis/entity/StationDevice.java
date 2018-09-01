@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,18 +12,20 @@ import java.util.Date;
 @Entity
 @Table(name="station_device")
 @NamedQuery(name="StationDevice.findAll", query="SELECT s FROM StationDevice s")
-public class StationDevice implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class StationDevice extends BaseBisEntity implements Serializable {
+	
+	
 
-	@Id
-	private int id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5228031139857842384L;
+
+
 
 	private String code;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-
-	private int creator;
+	
 
 	private int faultNumber;
 
@@ -31,10 +33,7 @@ public class StationDevice implements Serializable {
 
 	private String localPoint;
 
-	private int modifier;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date moditime;
+	
 
 	private int stationId;
 
@@ -47,13 +46,7 @@ public class StationDevice implements Serializable {
 	public StationDevice() {
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 
 	public String getCode() {
 		return this.code;
@@ -63,21 +56,7 @@ public class StationDevice implements Serializable {
 		this.code = code;
 	}
 
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public int getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(int creator) {
-		this.creator = creator;
-	}
+	
 
 	public int getFaultNumber() {
 		return this.faultNumber;
@@ -103,21 +82,7 @@ public class StationDevice implements Serializable {
 		this.localPoint = localPoint;
 	}
 
-	public int getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(int modifier) {
-		this.modifier = modifier;
-	}
-
-	public Date getModitime() {
-		return this.moditime;
-	}
-
-	public void setModitime(Date moditime) {
-		this.moditime = moditime;
-	}
+	
 
 	public int getStationId() {
 		return this.stationId;

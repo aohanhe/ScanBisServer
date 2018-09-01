@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,19 +15,26 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QBaseAccount extends EntityPathBase<BaseAccount> {
 
-    private static final long serialVersionUID = -1264217724L;
+    private static final long serialVersionUID = -1451605644L;
 
     public static final QBaseAccount baseAccount = new QBaseAccount("baseAccount");
 
-    public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
+    public final QBaseBisEntity _super = new QBaseBisEntity(this);
 
-    public final NumberPath<Integer> creator = createNumber("creator", Integer.class);
+    //inherited
+    public final DateTimePath<java.util.Date> created = _super.created;
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+    //inherited
+    public final NumberPath<Integer> creator = _super.creator;
 
-    public final NumberPath<Integer> modifier = createNumber("modifier", Integer.class);
+    //inherited
+    public final NumberPath<Integer> id = _super.id;
 
-    public final DateTimePath<java.util.Date> moditime = createDateTime("moditime", java.util.Date.class);
+    //inherited
+    public final NumberPath<Integer> modifier = _super.modifier;
+
+    //inherited
+    public final DateTimePath<java.util.Date> moditime = _super.moditime;
 
     public final NumberPath<Integer> operatorId = createNumber("operatorId", Integer.class);
 
@@ -37,7 +44,7 @@ public class QBaseAccount extends EntityPathBase<BaseAccount> {
 
     public final StringPath regionCode = createString("regionCode");
 
-    public final NumberPath<Integer> status = createNumber("status", Integer.class);
+    public final BooleanPath status = createBoolean("status");
 
     public final StringPath userName = createString("userName");
 

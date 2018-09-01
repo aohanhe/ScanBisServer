@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,9 +15,11 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QAccountRecharge extends EntityPathBase<AccountRecharge> {
 
-    private static final long serialVersionUID = 458919772L;
+    private static final long serialVersionUID = 896911180L;
 
     public static final QAccountRecharge accountRecharge = new QAccountRecharge("accountRecharge");
+
+    public final QBaseBisEntity _super = new QBaseBisEntity(this);
 
     public final NumberPath<Float> afterMoney = createNumber("afterMoney", Float.class);
 
@@ -27,15 +29,20 @@ public class QAccountRecharge extends EntityPathBase<AccountRecharge> {
 
     public final StringPath code = createString("code");
 
-    public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.util.Date> created = _super.created;
 
-    public final NumberPath<Integer> creator = createNumber("creator", Integer.class);
+    //inherited
+    public final NumberPath<Integer> creator = _super.creator;
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+    //inherited
+    public final NumberPath<Integer> id = _super.id;
 
-    public final NumberPath<Integer> modifier = createNumber("modifier", Integer.class);
+    //inherited
+    public final NumberPath<Integer> modifier = _super.modifier;
 
-    public final DateTimePath<java.util.Date> moditime = createDateTime("moditime", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.util.Date> moditime = _super.moditime;
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 

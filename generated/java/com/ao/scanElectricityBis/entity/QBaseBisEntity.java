@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -10,14 +10,14 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QBaseOperator is a Querydsl query type for BaseOperator
+ * QBaseBisEntity is a Querydsl query type for BaseBisEntity
  */
-@Generated("com.querydsl.codegen.EntitySerializer")
-public class QBaseOperator extends EntityPathBase<BaseOperator> {
+@Generated("com.querydsl.codegen.SupertypeSerializer")
+public class QBaseBisEntity extends EntityPathBase<BaseBisEntity> {
 
-    private static final long serialVersionUID = 1100549165L;
+    private static final long serialVersionUID = 1037260182L;
 
-    public static final QBaseOperator baseOperator = new QBaseOperator("baseOperator");
+    public static final QBaseBisEntity baseBisEntity = new QBaseBisEntity("baseBisEntity");
 
     public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
 
@@ -29,18 +29,16 @@ public class QBaseOperator extends EntityPathBase<BaseOperator> {
 
     public final DateTimePath<java.util.Date> moditime = createDateTime("moditime", java.util.Date.class);
 
-    public final StringPath name = createString("name");
-
-    public QBaseOperator(String variable) {
-        super(BaseOperator.class, forVariable(variable));
+    public QBaseBisEntity(String variable) {
+        super(BaseBisEntity.class, forVariable(variable));
     }
 
-    public QBaseOperator(Path<? extends BaseOperator> path) {
+    public QBaseBisEntity(Path<? extends BaseBisEntity> path) {
         super(path.getType(), path.getMetadata());
     }
 
-    public QBaseOperator(PathMetadata metadata) {
-        super(BaseOperator.class, metadata);
+    public QBaseBisEntity(PathMetadata metadata) {
+        super(BaseBisEntity.class, metadata);
     }
 
 }

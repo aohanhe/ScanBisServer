@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,9 +15,11 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QAccountExpense extends EntityPathBase<AccountExpense> {
 
-    private static final long serialVersionUID = -1684189949L;
+    private static final long serialVersionUID = -700229869L;
 
     public static final QAccountExpense accountExpense = new QAccountExpense("accountExpense");
+
+    public final QBaseOnlyIdEntity _super = new QBaseOnlyIdEntity(this);
 
     public final NumberPath<Float> afterMoney = createNumber("afterMoney", Float.class);
 
@@ -29,7 +31,8 @@ public class QAccountExpense extends EntityPathBase<AccountExpense> {
 
     public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+    //inherited
+    public final NumberPath<Integer> id = _super.id;
 
     public final NumberPath<Integer> plugid = createNumber("plugid", Integer.class);
 

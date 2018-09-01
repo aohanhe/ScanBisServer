@@ -1,1 +1,3 @@
 rootProject.name = 'ScanBisServer'
+includeFlat 'jpaQueryHelper'
+project(':jpaQueryHelper').projectDir = new File(settingsDir,'../../../jpaQueryHelper')

@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -10,24 +10,21 @@ import java.util.Date;
  * 
  */
 @Entity
-@NamedQuery(name="Station_stationInfo.findAll", query="SELECT s FROM Station_stationInfo s")
-public class Station_stationInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
+@Table(name="Station_stationInfo")
+@NamedQuery(name="StationStationInfo.findAll", query="SELECT s FROM StationStationInfo s")
+public class StationStationInfo extends BaseBisEntity implements Serializable {
 
-	@Id
-	private int id;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8998103228404163602L;
+
+
 
 	private String address;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-
-	private int creator;
-
-	private int modifier;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date moditime;
+	
 
 	private String name;
 
@@ -43,17 +40,10 @@ public class Station_stationInfo implements Serializable {
 
 	private byte status;
 
-	public Station_stationInfo() {
+	public StationStationInfo() {
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	
 	public String getAddress() {
 		return this.address;
 	}
@@ -62,37 +52,7 @@ public class Station_stationInfo implements Serializable {
 		this.address = address;
 	}
 
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public int getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(int creator) {
-		this.creator = creator;
-	}
-
-	public int getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(int modifier) {
-		this.modifier = modifier;
-	}
-
-	public Date getModitime() {
-		return this.moditime;
-	}
-
-	public void setModitime(Date moditime) {
-		this.moditime = moditime;
-	}
+	
 
 	public String getName() {
 		return this.name;

@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,11 +12,8 @@ import java.util.Date;
 @Entity
 @Table(name="account_recharge")
 @NamedQuery(name="AccountRecharge.findAll", query="SELECT a FROM AccountRecharge a")
-public class AccountRecharge implements Serializable {
+public class AccountRecharge extends BaseBisEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	private int id;
 
 	private float afterMoney;
 
@@ -26,15 +23,7 @@ public class AccountRecharge implements Serializable {
 
 	private String code;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-
-	private int creator;
-
-	private int modifier;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date moditime;
+	
 
 	private int status;
 
@@ -43,13 +32,7 @@ public class AccountRecharge implements Serializable {
 	public AccountRecharge() {
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 
 	public float getAfterMoney() {
 		return this.afterMoney;
@@ -83,37 +66,6 @@ public class AccountRecharge implements Serializable {
 		this.code = code;
 	}
 
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public int getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(int creator) {
-		this.creator = creator;
-	}
-
-	public int getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(int modifier) {
-		this.modifier = modifier;
-	}
-
-	public Date getModitime() {
-		return this.moditime;
-	}
-
-	public void setModitime(Date moditime) {
-		this.moditime = moditime;
-	}
 
 	public int getStatus() {
 		return this.status;

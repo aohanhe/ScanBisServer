@@ -1,4 +1,4 @@
-package com.ao.entity;
+package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,11 +12,8 @@ import java.util.Date;
 @Entity
 @Table(name="account_expense")
 @NamedQuery(name="AccountExpense.findAll", query="SELECT a FROM AccountExpense a")
-public class AccountExpense implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	private int id;
+public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
+	private static final long serialVersionUID = 2388007214188422750L;
 
 	private float afterMoney;
 
@@ -35,14 +32,7 @@ public class AccountExpense implements Serializable {
 
 	public AccountExpense() {
 	}
-
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 
 	public float getAfterMoney() {
 		return this.afterMoney;
