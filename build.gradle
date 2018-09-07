@@ -1,8 +1,10 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.4.RELEASE'
+		springBootVersion = '2.1.0.M2'
 	}
 	repositories {
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
 		mavenCentral()
 	}
 	dependencies {
@@ -20,6 +22,9 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 10
 
 repositories {
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
 	mavenCentral()
 }
 
@@ -56,19 +61,26 @@ sourceSets {
 dependencies {
 	
 	compile project(':jpaQueryHelper')
+	
+	//compile('com.alibaba:druid-spring-boot-starter:1.1.10')
 
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('io.projectreactor:reactor-core')
 	
 	compile('org.apache.commons:commons-lang3:3.8')
 	compile('com.querydsl:querydsl-jpa:4.2.1')
 	compile('com.querydsl:querydsl-apt:4.2.1:jpa')
 	
+	compile('com.fasterxml.jackson.core:jackson-annotations')
+	compile('com.fasterxml.jackson.core:jackson-core')
+	compile('com.fasterxml.jackson.core:jackson-databind')
+	
 	compile('javax.xml.bind:jaxb-api')
-	compile('com.sun.xml.bind:jaxb-impl:2.3.0')
-	compile('com.sun.xml.bind:jaxb-core:2.3.0')
-	compile('javax.activation:activation:1.1.1')
+	compile('com.sun.xml.bind:jaxb-impl')
+	compile('com.sun.xml.bind:jaxb-core')
+	compile('javax.activation:activation')
 	
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')

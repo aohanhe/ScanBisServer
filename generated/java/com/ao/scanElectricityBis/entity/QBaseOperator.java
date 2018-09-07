@@ -38,6 +38,9 @@ public class QBaseOperator extends EntityPathBase<BaseOperator> {
 
     public final StringPath name = createString("name");
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QBaseOperator(String variable) {
         super(BaseOperator.class, forVariable(variable));
     }

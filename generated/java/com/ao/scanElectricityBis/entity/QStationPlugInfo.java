@@ -29,6 +29,8 @@ public class QStationPlugInfo extends EntityPathBase<StationPlugInfo> {
     //inherited
     public final NumberPath<Integer> creator = _super.creator;
 
+    public final NumberPath<Integer> deviceid = createNumber("deviceid", Integer.class);
+
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
@@ -37,6 +39,9 @@ public class QStationPlugInfo extends EntityPathBase<StationPlugInfo> {
 
     //inherited
     public final DateTimePath<java.util.Date> moditime = _super.moditime;
+
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
 
     public QStationPlugInfo(String variable) {
         super(StationPlugInfo.class, forVariable(variable));

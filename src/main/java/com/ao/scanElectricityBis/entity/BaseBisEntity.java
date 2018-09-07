@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,10 +20,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseBisEntity {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+public class BaseBisEntity extends BaseOnlyIdEntity{
+	
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
@@ -37,14 +37,17 @@ public class BaseBisEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
 	private Date moditime;
+	
+		
+	@Version
+	private int version;
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	@Transient
+	private String creatorName;
+	
+	@Transient
+	private String modifierName;
+	
 
 	public Date getCreated() {
 		return created;
@@ -76,6 +79,30 @@ public class BaseBisEntity {
 
 	public void setModitime(Date moditime) {
 		this.moditime = moditime;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public String getCreatorName() {
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
+
+	public String getModifierName() {
+		return modifierName;
+	}
+
+	public void setModifierName(String modifierName) {
+		this.modifierName = modifierName;
 	}
 
 }

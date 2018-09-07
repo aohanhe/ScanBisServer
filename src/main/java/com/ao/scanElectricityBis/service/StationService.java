@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JpaQueryCreator;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.entity.QStationDevice;
@@ -18,6 +19,7 @@ import com.ao.scanElectricityBis.entity.StationMongoEntry.Pos;
 import com.ao.scanElectricityBis.entity.StationStationInfo;
 import com.ao.scanElectricityBis.repository.StationEntryMongoRepository;
 import com.ao.scanElectricityBis.repository.StationRepositiory;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import ao.jpaQueryHelper.BaseJpaQueryBean;
@@ -49,21 +51,13 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 	}
 
 
-	@Override
-	public TypedQuery<StationStationInfo> findAllByQueryBean(BaseJpaQueryBean query,
-			Class<StationStationInfo> reClassType) throws JpaQueryHelperException {
-
-		return JpaQueryHelper.createQueryFromBean(em, query, null, list -> {
-
-		}, reClassType);
-	}
-
+	
 	/**
 	 * 重写保存数据操作，以同步mongodb操作
 	 */
 	@Override
 	protected StationStationInfo onSave(StationStationInfo item) {
-		item=this.getRep().save(item);
+		item=this.rep.save(item);
 		StationMongoEntry mongItem=new StationMongoEntry();
 		
 		mongItem.setStationId(item.getId());		
@@ -83,7 +77,7 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 	 */
 	@Override
 	protected StationStationInfo onSaveNew(StationStationInfo item) {
-		item=this.getRep().save(item);
+		item=this.rep.save(item);
 		StationMongoEntry mongItem=new StationMongoEntry();
 		
 		mongItem.setStationId(item.getId());		
@@ -135,6 +129,7 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 			   .groupBy(station.id)
 			   .where(station.id.eq(id))
 			   .fetchOne();
+		
 		
 		
 		if(item==null) return 0;

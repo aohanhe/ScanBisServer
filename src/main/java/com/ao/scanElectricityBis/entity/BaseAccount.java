@@ -15,18 +15,24 @@ import java.util.Date;
 public class BaseAccount extends BaseBisEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Column(name="operatorid")
 	private int operatorId;
 
 	private String phone;
 
 	private String pwd;
 
+	@Column(name="regioncode")
 	private String regionCode;
 
 	@Column(columnDefinition="status")
 	private boolean status;
 
+	@Column(name="username")
 	private String userName;
+	
+	@Transient
+	private String operatorName;
 
 	public BaseAccount() {
 	}
@@ -78,6 +84,16 @@ public class BaseAccount extends BaseBisEntity implements Serializable {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
 	}
 
 }

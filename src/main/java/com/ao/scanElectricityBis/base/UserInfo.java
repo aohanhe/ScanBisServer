@@ -7,36 +7,36 @@ public interface UserInfo {
 	 */
 	public String getName();
 	/**
-	 * å–å¾—å½“å‰ç”¨æˆ·ID
+	 * È¡µÃµ±Ç°ÓÃ»§ID
 	 * @return
 	 */
 	public int getUser();
 	/**
-	 * ç”¨æˆ·å¤´åƒ
+	 * ÓÃ»§Í·Ïñ
 	 * @return
 	 */
 	public String getAvatar();
 	/**
-	 * æ˜¯å¦ä¸ºç®¡ç†å‘˜ç”¨æˆ·
+	 * ÊÇ·ñÎª¹ÜÀíÔ±ÓÃ»§
 	 * @return
 	 */
 	public boolean isAdminUser();
 	
 	
 	/**
-	 * å–å¾—ç®¡ç†æƒé™åŒºåŸŸ
+	 * È¡µÃ¹ÜÀíÈ¨ÏŞÇøÓò
 	 * @return
 	 */
 	public String getRightAreaCode();
 	
 	/**
-	 * å–å¾—ç”¨æˆ·å¯¹åº”çš„è¿è¥å•†ID
+	 * È¡µÃÓÃ»§¶ÔÓ¦µÄÔËÓªÉÌID
 	 * @return
 	 */
 	public Integer getOperatorId();
 	
 	/**
-	 * æ˜¯å¦æ‹¥æœ‰å¯¹åº”æƒé™é¡¹
+	 * ÊÇ·ñÓµÓĞ¶ÔÓ¦È¨ÏŞÏî
 	 * @param rightKey	 
 	 * @return
 	 */
@@ -44,3 +44,4 @@ public interface UserInfo {
 	
 
 }
+

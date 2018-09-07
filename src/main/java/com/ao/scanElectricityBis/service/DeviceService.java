@@ -23,13 +23,6 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository>{
 	@Autowired
 	private EntityManager em;
 	
-	@Override
-	public TypedQuery<StationDevice> findAllByQueryBean(BaseJpaQueryBean query, Class<StationDevice> reClassType)
-			throws JpaQueryHelperException {
-		
-		return JpaQueryHelper.createQueryFromBean(em, query, null, list->{
-			
-		}, reClassType);
-	}
+	
 
 }

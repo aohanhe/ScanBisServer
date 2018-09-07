@@ -19,15 +19,20 @@ public class QBaseBisEntity extends EntityPathBase<BaseBisEntity> {
 
     public static final QBaseBisEntity baseBisEntity = new QBaseBisEntity("baseBisEntity");
 
+    public final QBaseOnlyIdEntity _super = new QBaseOnlyIdEntity(this);
+
     public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
 
     public final NumberPath<Integer> creator = createNumber("creator", Integer.class);
 
-    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+    //inherited
+    public final NumberPath<Integer> id = _super.id;
 
     public final NumberPath<Integer> modifier = createNumber("modifier", Integer.class);
 
     public final DateTimePath<java.util.Date> moditime = createDateTime("moditime", java.util.Date.class);
+
+    public final NumberPath<Integer> version = createNumber("version", Integer.class);
 
     public QBaseBisEntity(String variable) {
         super(BaseBisEntity.class, forVariable(variable));

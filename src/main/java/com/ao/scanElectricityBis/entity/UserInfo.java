@@ -10,13 +10,14 @@ import java.util.Date;
  * 
  */
 @Entity(name="UserInfo")
-@Table(name="User_userInfo")
+@Table(name="User_userinfo")
 @NamedQuery(name="User_userInfo.findAll", query="SELECT u FROM UserInfo u")
 public class UserInfo  extends BaseBisEntity implements Serializable{	
 	
 	private static final long serialVersionUID = -7005710369086986604L;
 
 	@Temporal(TemporalType.TIMESTAMP)	
+	@Column(name="lastacess")
 	private Date lastAcess;
 	
 	private float money;
@@ -27,6 +28,7 @@ public class UserInfo  extends BaseBisEntity implements Serializable{
 
 	private String pwd;
 
+	@Column(name="username")
 	private String userName;
 
 	public UserInfo() {

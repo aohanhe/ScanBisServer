@@ -48,6 +48,9 @@ public class QUserInfo extends EntityPathBase<UserInfo> {
 
     public final StringPath userName = createString("userName");
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QUserInfo(String variable) {
         super(UserInfo.class, forVariable(variable));
     }

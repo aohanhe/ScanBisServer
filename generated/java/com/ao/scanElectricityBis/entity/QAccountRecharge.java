@@ -48,6 +48,9 @@ public class QAccountRecharge extends EntityPathBase<AccountRecharge> {
 
     public final NumberPath<Integer> userid = createNumber("userid", Integer.class);
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QAccountRecharge(String variable) {
         super(AccountRecharge.class, forVariable(variable));
     }

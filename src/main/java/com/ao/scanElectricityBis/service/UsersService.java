@@ -33,10 +33,9 @@ public class UsersService extends BaseService<UserInfo,UserRepository>{
 	@Autowired
 	private EntityManager em;
 
-	@Autowired
-	private UserInfo userInfo;
-	@Value("${sys.user.minmoney}")
-	private int minMoney = 5;
+
+	@Value("${sys.user.minmoney:10}")
+	private int minMoney ;
 
 	/**
 	 * querydsl构建工具

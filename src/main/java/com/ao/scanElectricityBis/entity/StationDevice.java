@@ -2,6 +2,9 @@ package com.ao.scanElectricityBis.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+
+
 import java.util.Date;
 
 
@@ -26,22 +29,25 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	private String code;
 
 	
-
+	@Column(name="faultnumber")
 	private int faultNumber;
 
+	@Column(name="localadress")
 	private String localAdress;
 
-	private String localPoint;
+	@Column(name="localpoint")
+	private String localPoint;	
 
-	
-
+	@Column(name="stationid")
 	private int stationId;
 
 	private byte status;
-
+	@Column(name="totalnumber")
 	private int totalNumber;
-
+	@Column(name="usingnumber")
 	private int usingNumber;
+	
+	
 
 	public StationDevice() {
 	}

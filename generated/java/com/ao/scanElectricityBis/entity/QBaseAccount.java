@@ -48,6 +48,9 @@ public class QBaseAccount extends EntityPathBase<BaseAccount> {
 
     public final StringPath userName = createString("userName");
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QBaseAccount(String variable) {
         super(BaseAccount.class, forVariable(variable));
     }

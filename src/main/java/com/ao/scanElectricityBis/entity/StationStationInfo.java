@@ -10,7 +10,7 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="Station_stationInfo")
+@Table(name="Station_stationinfo")
 @NamedQuery(name="StationStationInfo.findAll", query="SELECT s FROM StationStationInfo s")
 public class StationStationInfo extends BaseBisEntity implements Serializable {
 
@@ -28,17 +28,20 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 
 	private String name;
 
-	private int operatorId;
+	private int operatorid;
 
 	private String point;
 
 	private float price;
 
 	private String regioncode;
-
+	
+	@Column(name="sharingscale")
 	private float sharingScale;
 
 	private byte status;
+	
+	
 
 	public StationStationInfo() {
 	}
@@ -63,11 +66,11 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 	}
 
 	public int getOperatorId() {
-		return this.operatorId;
+		return this.operatorid;
 	}
 
 	public void setOperatorId(int operatorId) {
-		this.operatorId = operatorId;
+		this.operatorid = operatorId;
 	}
 
 	public String getPoint() {

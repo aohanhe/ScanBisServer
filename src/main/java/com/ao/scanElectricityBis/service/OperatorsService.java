@@ -23,19 +23,6 @@ public class OperatorsService extends BaseService<BaseOperator, OperatorsReposit
 	@Autowired
 	private EntityManager em;
 	
-	/**
-	 * 按条件查询运营商信息
-	 */
-	@Override
-	public TypedQuery<BaseOperator> findAllByQueryBean(BaseJpaQueryBean query, Class<BaseOperator> reClassType)
-			throws JpaQueryHelperException {
-		
-		return JpaQueryHelper.createQueryFromBean(em, query, null, 
-				list->{
-				
-					
-				}
-				, reClassType);
-	}
+	
 
 }

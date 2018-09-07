@@ -40,7 +40,7 @@ public class QStationStationInfo extends EntityPathBase<StationStationInfo> {
 
     public final StringPath name = createString("name");
 
-    public final NumberPath<Integer> operatorId = createNumber("operatorId", Integer.class);
+    public final NumberPath<Integer> operatorid = createNumber("operatorid", Integer.class);
 
     public final StringPath point = createString("point");
 
@@ -51,6 +51,9 @@ public class QStationStationInfo extends EntityPathBase<StationStationInfo> {
     public final NumberPath<Float> sharingScale = createNumber("sharingScale", Float.class);
 
     public final NumberPath<Byte> status = createNumber("status", Byte.class);
+
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
 
     public QStationStationInfo(String variable) {
         super(StationStationInfo.class, forVariable(variable));

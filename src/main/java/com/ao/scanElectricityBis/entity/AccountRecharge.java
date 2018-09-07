@@ -21,13 +21,19 @@ public class AccountRecharge extends BaseBisEntity implements Serializable {
 
 	private float charge;
 
-	private String code;
-
-	
+	private String code;	
 
 	private int status;
 
 	private int userid;
+	
+	@Transient
+	private String username;
+	
+	@Transient
+	private String phone;
+	
+		
 
 	public AccountRecharge() {
 	}
@@ -81,6 +87,30 @@ public class AccountRecharge extends BaseBisEntity implements Serializable {
 
 	public void setUserid(int userid) {
 		this.userid = userid;
+	}
+
+
+
+	public String getUsername() {
+		return username;
+	}
+
+
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+
+	public String getPhone() {
+		return phone;
+	}
+
+
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

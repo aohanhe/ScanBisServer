@@ -52,6 +52,9 @@ public class QStationDevice extends EntityPathBase<StationDevice> {
 
     public final NumberPath<Integer> usingNumber = createNumber("usingNumber", Integer.class);
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QStationDevice(String variable) {
         super(StationDevice.class, forVariable(variable));
     }
