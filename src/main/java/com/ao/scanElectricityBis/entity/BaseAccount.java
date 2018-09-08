@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name="base_accounts")
 @NamedQuery(name="BaseAccount.findAll", query="SELECT b FROM BaseAccount b")
-public class BaseAccount extends BaseBisEntity implements Serializable {
+public class BaseAccount extends BaseOnlyIdEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name="operatorid")

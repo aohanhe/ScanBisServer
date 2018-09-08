@@ -19,22 +19,10 @@ public class QBaseAccount extends EntityPathBase<BaseAccount> {
 
     public static final QBaseAccount baseAccount = new QBaseAccount("baseAccount");
 
-    public final QBaseBisEntity _super = new QBaseBisEntity(this);
-
-    //inherited
-    public final DateTimePath<java.util.Date> created = _super.created;
-
-    //inherited
-    public final NumberPath<Integer> creator = _super.creator;
+    public final QBaseOnlyIdEntity _super = new QBaseOnlyIdEntity(this);
 
     //inherited
     public final NumberPath<Integer> id = _super.id;
-
-    //inherited
-    public final NumberPath<Integer> modifier = _super.modifier;
-
-    //inherited
-    public final DateTimePath<java.util.Date> moditime = _super.moditime;
 
     public final NumberPath<Integer> operatorId = createNumber("operatorId", Integer.class);
 

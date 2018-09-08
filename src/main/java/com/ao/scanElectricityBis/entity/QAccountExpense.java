@@ -38,6 +38,9 @@ public class QAccountExpense extends EntityPathBase<AccountExpense> {
 
     public final NumberPath<Integer> userid = createNumber("userid", Integer.class);
 
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
+
     public QAccountExpense(String variable) {
         super(AccountExpense.class, forVariable(variable));
     }

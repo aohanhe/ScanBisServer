@@ -30,7 +30,7 @@ public class QUserInfo extends EntityPathBase<UserInfo> {
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
-    public final DateTimePath<java.util.Date> lastAcess = createDateTime("lastAcess", java.util.Date.class);
+    public final DateTimePath<java.util.Date> lastAccess = createDateTime("lastAccess", java.util.Date.class);
 
     //inherited
     public final NumberPath<Integer> modifier = _super.modifier;
@@ -40,13 +40,13 @@ public class QUserInfo extends EntityPathBase<UserInfo> {
 
     public final NumberPath<Float> money = createNumber("money", Float.class);
 
+    public final StringPath name = createString("name");
+
     public final StringPath openid = createString("openid");
 
     public final StringPath phone = createString("phone");
 
     public final StringPath pwd = createString("pwd");
-
-    public final StringPath userName = createString("userName");
 
     //inherited
     public final NumberPath<Integer> version = _super.version;

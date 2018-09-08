@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
+import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.QBaseOperator;
 import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.QStationPlugInfo;
@@ -25,8 +26,11 @@ public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoReposi
 	@Autowired
 	private EntityManager em;
 
-	private SelectExpressionCollection<StationPlugInfo> selectList;
+	private ScanSeverExpressionMaps<StationPlugInfo> selectList;
 	
+	public PlugInfoService() {
+		super(QStationPlugInfo.stationPlugInfo);
+	}
 	
 	@Override
 	protected JPAQuery<Tuple> createFullDslQuery() throws ScanElectricityException {
@@ -37,7 +41,7 @@ public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoReposi
 		
 		try {
 			if(selectList==null) {
-				selectList=new SelectExpressionCollection<StationPlugInfo>(plugInfo, StationPlugInfo.class);
+				selectList=new ScanSeverExpressionMaps<StationPlugInfo>(plugInfo, StationPlugInfo.class);
 				selectList.putItem("deviceid", device.id);
 				selectList.putItem("deviceCode", device.code);
 				selectList.putItem("stationId", device.stationId);
@@ -51,11 +55,13 @@ public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoReposi
 				selectList.putItem("operator", operator.name);				
 			}
 			
-			return factory.select(selectList.getExpressionArray())
+			var query= factory.select(selectList.getExpressionArray())
 				.from(plugInfo)
 				.leftJoin(device).on(plugInfo.deviceid.eq(device.id))
 				.leftJoin(station).on(device.stationId.eq(station.id))
 				.leftJoin(operator).on(station.operatorid.eq(operator.id));
+			
+			return selectList.addExtendsLeftJoin(query);
 			
 		}catch(Exception ex) {
 			logger.error("创建查询条件失败:" + ex.getMessage(), ex);

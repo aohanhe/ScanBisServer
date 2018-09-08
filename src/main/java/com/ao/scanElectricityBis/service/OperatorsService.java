@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.entity.BaseOperator;
+import com.ao.scanElectricityBis.entity.QBaseOperator;
 import com.ao.scanElectricityBis.repository.OperatorsRepositiory;
 
 import ao.jpaQueryHelper.BaseJpaQueryBean;
@@ -23,6 +24,8 @@ public class OperatorsService extends BaseService<BaseOperator, OperatorsReposit
 	@Autowired
 	private EntityManager em;
 	
-	
+	public OperatorsService() {
+		super(QBaseOperator.baseOperator);
+	}
 
 }

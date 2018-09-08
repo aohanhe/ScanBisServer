@@ -53,6 +53,8 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 
 	@Autowired
 	protected Repository rep;
+	
+	protected Expression<?> mainExpression;
 
 	/**
 	 * querydsl构建工具
@@ -63,6 +65,10 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	public void init() {
 		factory = new JPAQueryFactory(em);
 	}
+	
+	public BaseService(Expression<?> mainExpression) {
+		this.mainExpression = mainExpression;
+	}
 
 	/**
 	 * 通过ID取得对象
@@ -72,7 +78,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	 * @throws ScanElectricityException
 	 */
 	public Mono<T> findItemById(int id, Class<? extends BaseOnlyIdEntity> classType) throws ScanElectricityException {
-		String name = classType.getName();
+		String name = classType.getSimpleName();
 		Entity entityDef = classType.getAnnotation(Entity.class);
 		if (entityDef != null && !Strings.isBlank(entityDef.name()))
 			name = entityDef.name();
@@ -122,7 +128,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 		var res = query.offset((pager.getPage() - 1) * pager.getSize()).limit(pager.getSize()).fetchResults();
 		var list = Flux.fromIterable(res.getResults()).map(this::fecthTupleIntoEntity);
 
-		var pageResult = new PagerResult<T>(pager, res.getTotal(), list);
+		var pageResult = new PagerResult<T>(pager.getPage(),pager.getSize(), res.getTotal(), list);
 
 		return pageResult;
 	}
@@ -280,7 +286,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 
 		try {
 			var query = this.createFullDslQuery();
-			var list = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean).fetch();
+			var list = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean,mainExpression).fetch();
 
 			return Flux.fromIterable(list).map(this::fecthTupleIntoEntity);
 
@@ -300,10 +306,10 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	public PagerResult<T> findAllByQueryBeanByPage(PageJpaQueryBean queryBean) throws ScanElectricityException {
 		try {
 			var query = this.createFullDslQuery();
-			var res = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean).fetchResults();
+			var res = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean,this.mainExpression).fetchResults();
 			var list = Flux.fromIterable(res.getResults()).map(this::fecthTupleIntoEntity);
 
-			var pageResult = new PagerResult<T>(queryBean.getPager(), res.getTotal(), list);
+			var pageResult = new PagerResult<T>(queryBean.getPage(),queryBean.getLimit(), res.getTotal(), list);
 
 			return pageResult;
 

@@ -40,16 +40,13 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 	@Autowired
 	private StationEntryMongoRepository mongoRep;
 	
-	/**
-	 * querydsl构建工具
-	 */
-	private JPAQueryFactory factory;
+	
+	
 
-	@PostConstruct
-	public void init() {
-		factory = new JPAQueryFactory(em);
+
+	public StationService() {
+		super(QStationStationInfo.stationStationInfo);
 	}
-
 
 	
 	/**

@@ -6,6 +6,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.StationDevice;
 import com.ao.scanElectricityBis.repository.DeviceRepository;
 
@@ -23,6 +24,8 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository>{
 	@Autowired
 	private EntityManager em;
 	
-	
+	public DeviceService() {
+		super(QStationDevice.stationDevice);
+	}
 
 }

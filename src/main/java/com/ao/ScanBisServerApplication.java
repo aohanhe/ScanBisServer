@@ -76,13 +76,13 @@ public class ScanBisServerApplication {
 		var expense=QAccountExpense.accountExpense;
 		var userInfo = QUserInfo.userInfo;
 		
-		var res=factory.select(expense.id,userInfo.userName)
+		var res=factory.select(expense.id,userInfo.name)
 		       .from(expense)
 		       .leftJoin(userInfo).on(expense.userid.eq(userInfo.id))
 		       .fetch();
 		
 		res.forEach(v->{
-			System.out.println(v.get(userInfo.userName));
+			System.out.println(v.get(userInfo.name));
 		});
 		
 	}

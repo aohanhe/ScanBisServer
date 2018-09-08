@@ -11,6 +11,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
+import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.BaseAccount;
 import com.ao.scanElectricityBis.entity.QBaseAccount;
 import com.ao.scanElectricityBis.entity.QBaseOperator;
@@ -35,7 +36,7 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 	@Autowired
 	private EntityManager em;
 
-	private SelectExpressionCollection<BaseAccount> selectLists;
+	private ScanSeverExpressionMaps<BaseAccount> selectLists;
 
 	/**
 	 * querydsl构建工具
@@ -45,6 +46,10 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 	@PostConstruct
 	public void init() {
 		factory = new JPAQueryFactory(em);
+	}
+	
+	public AccountService() {
+		super(QBaseAccount.baseAccount);
 	}
 
 	/**
@@ -93,7 +98,7 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 		try {
 
 			if (selectLists == null) {
-				selectLists = new SelectExpressionCollection<>(account, BaseAccount.class);
+				selectLists = new ScanSeverExpressionMaps<>(account, BaseAccount.class);
 				selectLists.putItem("operatorName", operator.name);
 
 			}

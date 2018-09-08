@@ -18,7 +18,7 @@ public class UserInfo  extends BaseBisEntity implements Serializable{
 
 	@Temporal(TemporalType.TIMESTAMP)	
 	@Column(name="lastacess")
-	private Date lastAcess;
+	private Date lastAccess;
 	
 	private float money;
 
@@ -29,20 +29,14 @@ public class UserInfo  extends BaseBisEntity implements Serializable{
 	private String pwd;
 
 	@Column(name="username")
-	private String userName;
+	private String name;
 
 	public UserInfo() {
 	}
 
 	
 
-	public Date getLastAcess() {
-		return this.lastAcess;
-	}
-
-	public void setLastAcess(Date lastAcess) {
-		this.lastAcess = lastAcess;
-	}
+	
 	
 
 	public float getMoney() {
@@ -77,12 +71,42 @@ public class UserInfo  extends BaseBisEntity implements Serializable{
 		this.pwd = pwd;
 	}
 
-	public String getUserName() {
-		return this.userName;
+
+
+
+
+
+	public Date getLastAccess() {
+		return lastAccess;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+
+
+
+
+
+	public void setLastAccess(Date lastAccess) {
+		this.lastAccess = lastAccess;
 	}
+
+
+
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
 
 }

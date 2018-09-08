@@ -32,7 +32,8 @@ public class QBaseBisEntity extends EntityPathBase<BaseBisEntity> {
 
     public final DateTimePath<java.util.Date> moditime = createDateTime("moditime", java.util.Date.class);
 
-    public final NumberPath<Integer> version = createNumber("version", Integer.class);
+    //inherited
+    public final NumberPath<Integer> version = _super.version;
 
     public QBaseBisEntity(String variable) {
         super(BaseBisEntity.class, forVariable(variable));

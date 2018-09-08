@@ -21,6 +21,8 @@ public class QBaseOnlyIdEntity extends EntityPathBase<BaseOnlyIdEntity> {
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final NumberPath<Integer> version = createNumber("version", Integer.class);
+
     public QBaseOnlyIdEntity(String variable) {
         super(BaseOnlyIdEntity.class, forVariable(variable));
     }

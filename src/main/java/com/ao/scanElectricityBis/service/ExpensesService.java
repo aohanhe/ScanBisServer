@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
+import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.AccountExpense;
 import com.ao.scanElectricityBis.entity.QAccountExpense;
 import com.ao.scanElectricityBis.entity.QBaseOperator;
@@ -42,7 +43,11 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 	private EntityManager em;
 	
 	
-	private SelectExpressionCollection<AccountExpense> selectList;
+	private ScanSeverExpressionMaps<AccountExpense> selectList;
+	
+	public ExpensesService() {
+		super(QAccountExpense.accountExpense);
+	}
 	
 	
 	@Override
@@ -57,8 +62,8 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		try {
 		
 		if(selectList==null) {
-			selectList=new SelectExpressionCollection<>(expense, AccountExpense.class);
-			selectList.putItem("userName", userInfo.userName);
+			selectList=new ScanSeverExpressionMaps<>(expense, AccountExpense.class);
+			selectList.putItem("name", userInfo.name);
 			selectList.putItem("phone", userInfo.phone);
 			selectList.putItem("deviceId", device.id);
 			selectList.putItem("devicecode", device.code);
@@ -70,15 +75,15 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		}		
 		
 		var selects=selectList.getExpressionArray();
-		
-		return factory.select(selects)				
+		var query=factory.select(selects)				
 				.from(expense)
 				.leftJoin(pluginfo).on(expense.plugid.eq(pluginfo.id))
 				.leftJoin(device).on(pluginfo.deviceid.eq(device.id))
 				.leftJoin(station).on(device.stationId.eq(station.id))
 				.leftJoin(operator).on(station.operatorid.eq(operator.id))
-				.leftJoin(userInfo).on(expense.userid.eq(userInfo.id))
-				;
+				.leftJoin(userInfo).on(expense.userid.eq(userInfo.id));
+		
+		return selectList.addExtendsLeftJoin(query);
 		
 		}catch(Exception ex) {
 			logger.error("创建查询指令出错:"+ex.getMessage(),ex);
@@ -127,7 +132,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		var expense=QAccountExpense.accountExpense;
 		var userInfo=QUserInfo.userInfo;
 		
-		return factory.select(expense,userInfo.userName)
+		return factory.select(expense,userInfo.name)
 				.from(expense).leftJoin(userInfo)
 				.on(expense.userid.eq(userInfo.id));
 	}
@@ -137,7 +142,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		var userInfo=QUserInfo.userInfo;
 		
 		AccountExpense item=tuple.get(expense);
-		item.setUserName(tuple.get(userInfo.userName));
+		item.setUserName(tuple.get(userInfo.name));
 		
 		return item;		
 	}

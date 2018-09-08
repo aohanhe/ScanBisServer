@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
+import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.AccountExpense;
 import com.ao.scanElectricityBis.entity.AccountRecharge;
 import com.ao.scanElectricityBis.entity.QAccountRecharge;
@@ -36,7 +37,11 @@ public class RechargesService extends BaseService<AccountRecharge, AccountRechar
 	@Autowired
 	private EntityManager em;
 
-	private SelectExpressionCollection<AccountRecharge> selectList;
+	private ScanSeverExpressionMaps<AccountRecharge> selectList;
+	
+	public RechargesService() {
+		super(QAccountRecharge.accountRecharge);
+	}
 
 	@Override
 	protected void onDeleteItemById(int id) throws ScanElectricityException {
@@ -47,23 +52,20 @@ public class RechargesService extends BaseService<AccountRecharge, AccountRechar
 	protected JPAQuery<Tuple> createFullDslQuery() throws ScanElectricityException {
 		var userInfo = QUserInfo.userInfo;
 		var recharge = QAccountRecharge.accountRecharge;
-		var account1 = QBaseAccount.baseAccount;
-		var account2 = new QBaseAccount("account2");
+		
 
 		try {
 			if (selectList == null) {
-				selectList = new SelectExpressionCollection<AccountRecharge>(recharge, AccountRecharge.class);
-				selectList.putItem("username", userInfo.userName);
+				selectList = new ScanSeverExpressionMaps<AccountRecharge>(recharge, AccountRecharge.class);
+				selectList.putItem("username", userInfo.name);
 				selectList.putItem("phone", userInfo.phone);
 
-				selectList.putItem("creatorName", account1.userName);
-				selectList.putItem("modifierName", account2.userName);
 			}
 
-			return factory.select(selectList.getExpressionArray()).from(recharge)
-					.leftJoin(userInfo).on(recharge.userid.eq(userInfo.id))
-					.leftJoin(account1).on(recharge.creator.eq(account1.id))
-					.leftJoin(account2).on(recharge.modifier.eq(account2.id));
+			var query = factory.select(selectList.getExpressionArray()).from(recharge)
+					.leftJoin(userInfo).on(recharge.userid.eq(userInfo.id));
+			
+			return selectList.addExtendsLeftJoin(query);
 
 		} catch (Exception ex) {
 			logger.error("创建查询条件失败:" + ex.getMessage(), ex);

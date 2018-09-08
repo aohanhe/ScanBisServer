@@ -39,8 +39,7 @@ public class BaseBisEntity extends BaseOnlyIdEntity{
 	private Date moditime;
 	
 		
-	@Version
-	private int version;
+	
 
 	@Transient
 	private String creatorName;
@@ -81,13 +80,7 @@ public class BaseBisEntity extends BaseOnlyIdEntity{
 		this.moditime = moditime;
 	}
 
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
+	
 
 	public String getCreatorName() {
 		return creatorName;
