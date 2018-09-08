@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
-
+import com.ao.scanElectricityBis.entity.QBaseAccount;
 import com.ao.scanElectricityBis.entity.QUserInfo;
 import com.ao.scanElectricityBis.entity.UserInfo;
 import com.ao.scanElectricityBis.repository.UserRepository;
@@ -61,6 +61,8 @@ public class UsersService extends BaseService<UserInfo,UserRepository>{
 
 		return re;
 	}
+	
+	
 
 	/**
 	 * 通过电话取得或者创建用户
