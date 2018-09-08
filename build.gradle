@@ -32,31 +32,34 @@ repositories {
 
 compileJava {
     options.compilerArgs << "-s"
-    options.compilerArgs << "$projectDir/generated/java"
-
-    doFirst {
-        // make sure that directory exists
-        file(new File(projectDir, "/generated/java")).mkdirs()
-    }
+    options.compilerArgs << "$projectDir/src/main/java"
+    
 }
 
 clean.doLast {
-    // clean-up directory when necessary
-    file(new File(projectDir, "/generated")).deleteDir()
+    // 删除上一次生成的辅助文件    
+	def dir=new File(projectDir, "/src/main/java")
+	dir.eachFileRecurse { file ->
+
+		def isHasPrex=file.name.startsWith('Q')
+		if (!isHasPrex) {
+			return;
+		}
+
+		def entityFileName= file.parent+"\\"+file.name.substring(1)
+
+		def entityFile = new File(entityFileName)
+
+		if(!entityFile.exists()) {
+			println '检测到以Q打头的文件['+file.name+']但不未检测的实体文件，跳过删除'
+			return;
+		}
+		
+		println '删除qsl的文件'+file.name
+		file.delete();
+	}
 }
 
-
-sourceSets {
-    generated {
-        java {
-            srcDir "$projectDir/generated/java"            
-        }
-    }
-    integTest {
-        compileClasspath += main.output + test.output + generated.output
-        runtimeClasspath += main.output + test.output + generated.output
-    }    
-}
 
 dependencies {
 	
