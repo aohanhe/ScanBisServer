@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 
 import org.apache.logging.log4j.util.Strings;
 
+import com.ao.QueryDslRootPaths;
 import com.ao.scanElectricityBis.entity.BaseBisEntity;
 import com.ao.scanElectricityBis.entity.QBaseAccount;
 import com.ao.scanElectricityBis.entity.QUserInfo;
@@ -20,8 +21,8 @@ import ao.jpaQueryHelper.SelectExpressionCollection;
 
 public class ScanSeverExpressionMaps <T> extends SelectExpressionCollection<T>{
 	private boolean isDoExtends=false;
-	private static final  QBaseAccount accountCreator=new QBaseAccount("accountCreator");
-	private static final  QBaseAccount accountModif=new QBaseAccount("accountModif");
+	private static final  QBaseAccount accountCreator=QueryDslRootPaths.creatorAccount;
+	private static final  QBaseAccount accountModif=QueryDslRootPaths.modifAccount;
 	private Class<T> classType;
 	private String name;
 
@@ -62,8 +63,7 @@ public class ScanSeverExpressionMaps <T> extends SelectExpressionCollection<T>{
 	 */
 	@Override
 	protected JPAQuery<Tuple> onAddExtendsLeftJoin(JPAQuery<Tuple> query) {
-		if(isDoExtends) {
-			
+		if(isDoExtends) {			
 			
 			var creatorPath=Expressions.path(Integer.class,(Path) this.mainExpression, "creator");
 			var modifPath=Expressions.path(Integer.class, (Path) this.mainExpression, "modifier");
@@ -74,7 +74,5 @@ public class ScanSeverExpressionMaps <T> extends SelectExpressionCollection<T>{
 		return query;
 		
 	}
-	
-	
 
 }

@@ -78,7 +78,7 @@ public class ScanBisServerApplication {
 		
 		var res=factory.select(expense.id,userInfo.name)
 		       .from(expense)
-		       .leftJoin(userInfo).on(expense.userid.eq(userInfo.id))
+		       .leftJoin(userInfo).on(expense.userId.eq(userInfo.id))
 		       .fetch();
 		
 		res.forEach(v->{
@@ -90,7 +90,7 @@ public class ScanBisServerApplication {
 	public void test4() {
 		var expense=QAccountExpense.accountExpense;
 		var test2=new QAccountExpense("test2");
-		var res=factory.select(test2.id,expense.userid)
+		var res=factory.select(test2.id,expense.userId)
 				.from(expense)
 				.leftJoin(test2).on(expense.id.eq(test2.id))
 				

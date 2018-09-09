@@ -83,7 +83,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 		if (entityDef != null && !Strings.isBlank(entityDef.name()))
 			name = entityDef.name();
 
-		Path entityPath = Expressions.path(classType, name);
+		Path entityPath = (Path) this.mainExpression;
 		Path idPath = Expressions.path(Integer.class, entityPath, "id");
 
 		var item = this.createFullDslQuery().where(Expressions.predicate(Ops.EQ, idPath, Expressions.constant(id)))

@@ -39,7 +39,8 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 
 	private int plugid;
 
-	private int userid;
+	@Column(name="userid")
+	private int userId;
 	
 	@Transient
 	private String userName;
@@ -60,13 +61,15 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 	private int stationId;
 	
 	@Transient
-	private String regioncode;
+	private String regionCode;
 	
 	@Transient
 	private int operatorId;
 	
 	@Transient
 	private String operator;
+	
+	
 	
 	
 	
@@ -122,17 +125,29 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 		this.plugid = plugid;
 	}
 
-	public int getUserid() {
-		return this.userid;
-	}
-
-	public void setUserid(int userid) {
-		this.userid = userid;
-	}
-
-
+	
 	public String getUserName() {
 		return userName;
+	}
+
+
+	public int getUserId() {
+		return userId;
+	}
+
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+
+	public String getRegionCode() {
+		return regionCode;
+	}
+
+
+	public void setRegionCode(String regionCode) {
+		this.regionCode = regionCode;
 	}
 
 
@@ -191,14 +206,7 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 	}
 
 
-	public String getRegioncode() {
-		return regioncode;
-	}
-
-
-	public void setRegioncode(String regioncode) {
-		this.regioncode = regioncode;
-	}
+	
 
 
 	public int getOperatorId() {
@@ -221,8 +229,6 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 	}
 
 
-	
-	
-	
+		
 
 }

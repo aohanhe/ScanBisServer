@@ -63,15 +63,15 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		
 		if(selectList==null) {
 			selectList=new ScanSeverExpressionMaps<>(expense, AccountExpense.class);
-			selectList.putItem("name", userInfo.name);
+			selectList.putItem("userName", userInfo.name);
 			selectList.putItem("phone", userInfo.phone);
 			selectList.putItem("deviceId", device.id);
 			selectList.putItem("devicecode", device.code);
 			selectList.putItem("station", station.name);
 			selectList.putItem("stationId", station.id);
-			selectList.putItem("regioncode", station.regioncode);
+			selectList.putItem("regionCode", station.regioncode);
 			selectList.putItem("operatorId", station.operatorid);
-			selectList.putItem("operator", operator.name);
+			selectList.putItem("operator", operator.name);			
 		}		
 		
 		var selects=selectList.getExpressionArray();
@@ -81,7 +81,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 				.leftJoin(device).on(pluginfo.deviceid.eq(device.id))
 				.leftJoin(station).on(device.stationId.eq(station.id))
 				.leftJoin(operator).on(station.operatorid.eq(operator.id))
-				.leftJoin(userInfo).on(expense.userid.eq(userInfo.id));
+				.leftJoin(userInfo).on(expense.userId.eq(userInfo.id));
 		
 		return selectList.addExtendsLeftJoin(query);
 		
@@ -113,7 +113,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 	public Pair<Float, Integer> getTotalTimeAndMoney(int id) {
 		var expense=QAccountExpense.accountExpense;
 		var res=factory.select(expense.cost.sum(),expense.costminute.sum()).from(expense)
-		       .where(expense.userid.eq(id)).fetchOne();
+		       .where(expense.userId.eq(id)).fetchOne();
 		
 		return Pair.of(res.get(expense.cost), res.get(expense.costminute));
 	}
@@ -134,7 +134,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		
 		return factory.select(expense,userInfo.name)
 				.from(expense).leftJoin(userInfo)
-				.on(expense.userid.eq(userInfo.id));
+				.on(expense.userId.eq(userInfo.id));
 	}
 	
 	public AccountExpense fectchDataItem(Tuple tuple) {
