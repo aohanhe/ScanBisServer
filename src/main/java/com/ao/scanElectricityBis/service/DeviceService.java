@@ -1,29 +1,26 @@
 package com.ao.scanElectricityBis.service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ao.scanElectricityBis.base.ScanElectricityException;
 import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.StationDevice;
 import com.ao.scanElectricityBis.repository.DeviceRepository;
 
-import ao.jpaQueryHelper.BaseJpaQueryBean;
-import ao.jpaQueryHelper.JpaQueryHelper;
-import ao.jpaQueryHelper.JpaQueryHelperException;
-
 /**
  * 设备服务
+ * 
  * @author aohanhe
  *
  */
 @Service
-public class DeviceService extends BaseService<StationDevice, DeviceRepository>{
+public class DeviceService extends BaseService<StationDevice, DeviceRepository> {
 	@Autowired
 	private EntityManager em;
-	
+
 	public DeviceService() {
 		super(QStationDevice.stationDevice);
 	}
@@ -32,4 +29,18 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository>{
 		
 	}
 
+	/**
+	 * 通过ID取得对象
+	 * 
+	 * @param code
+	 * @return
+	 * @throws ScanElectricityException
+	 */
+	public StationDevice findItemByCode(String code) throws ScanElectricityException {
+		var device = QStationDevice.stationDevice;
+
+		return this.findAllItems(v -> {
+			return v.where(device.code.eq(code));
+		}).blockFirst();
+	}
 }
