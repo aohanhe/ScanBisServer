@@ -25,9 +25,7 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository> 
 		super(QStationDevice.stationDevice);
 	}
 	
-	public void Test4() {
-		
-	}
+	
 
 	/**
 	 * 通过ID取得对象

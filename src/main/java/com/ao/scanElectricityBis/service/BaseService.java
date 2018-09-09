@@ -60,6 +60,9 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	 * querydsl构建工具
 	 */
 	protected JPAQueryFactory factory;
+	
+	@Autowired
+	protected QueryDslQueryHelper dslHelper;
 
 	@PostConstruct
 	public void init() {
@@ -286,7 +289,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 
 		try {
 			var query = this.createFullDslQuery();
-			var list = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean,mainExpression).fetch();
+			var list = dslHelper.initPredicateAndSortFromQueryBean(query, queryBean).fetch();
 
 			return Flux.fromIterable(list).map(this::fecthTupleIntoEntity);
 
@@ -306,7 +309,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	public PagerResult<T> findAllByQueryBeanByPage(PageJpaQueryBean queryBean) throws ScanElectricityException {
 		try {
 			var query = this.createFullDslQuery();
-			var res = QueryDslQueryHelper.initPredicateAndSortFromQueryBean(query, queryBean,this.mainExpression).fetchResults();
+			var res = dslHelper.initPredicateAndSortFromQueryBean(query, queryBean).fetchResults();
 			var list = Flux.fromIterable(res.getResults()).map(this::fecthTupleIntoEntity);
 
 			var pageResult = new PagerResult<T>(queryBean.getPage(),queryBean.getLimit(), res.getTotal(), list);
