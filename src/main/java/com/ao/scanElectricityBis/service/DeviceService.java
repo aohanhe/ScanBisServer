@@ -25,7 +25,7 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository> 
 		super(QStationDevice.stationDevice);
 	}
 	
-	public void Test3() {
+	public void Test4() {
 		
 	}
 
