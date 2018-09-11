@@ -7,24 +7,32 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.query.JpaQueryCreator;
 import org.springframework.stereotype.Service;
 
+import com.ao.scanElectricityBis.base.ScanElectricityException;
+import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
+import com.ao.scanElectricityBis.entity.QBaseOperator;
 import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.QStationStationInfo;
 import com.ao.scanElectricityBis.entity.StationDevice;
 import com.ao.scanElectricityBis.entity.StationMongoEntry;
+import com.ao.scanElectricityBis.entity.StationPlugInfo;
 import com.ao.scanElectricityBis.entity.StationMongoEntry.Pos;
 import com.ao.scanElectricityBis.entity.StationStationInfo;
 import com.ao.scanElectricityBis.repository.StationEntryMongoRepository;
 import com.ao.scanElectricityBis.repository.StationRepositiory;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import ao.jpaQueryHelper.BaseJpaQueryBean;
 import ao.jpaQueryHelper.JpaQueryHelper;
 import ao.jpaQueryHelper.JpaQueryHelperException;
+import ao.jpaQueryHelper.SelectExpressionCollection;
 import reactor.core.publisher.Flux;
 
 /**
@@ -35,19 +43,15 @@ import reactor.core.publisher.Flux;
  */
 @Service
 public class StationService extends BaseService<StationStationInfo, StationRepositiory> {
+	private Logger logger = LoggerFactory.getLogger(StationService.class);
 	@Autowired
 	private EntityManager em;
 	@Autowired
 	private StationEntryMongoRepository mongoRep;
-	
-	
-	
-
 
 	public StationService() {
 		super(QStationStationInfo.stationStationInfo);
 	}
-
 	
 	/**
 	 * 重写保存数据操作，以同步mongodb操作
@@ -84,8 +88,7 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 		String[] strPos = item.getPoint().split(",");
 		mongItem.setPos(new Pos(Double.parseDouble(strPos[0]),Double.parseDouble(strPos[1])));
 		
-		mongoRep.save(mongItem);
-		
+		mongoRep.save(mongItem);		
 		return item;
 	}
 	
@@ -125,15 +128,49 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 			   .leftJoin(station).on(device.stationId.eq(station.id))			   					   
 			   .groupBy(station.id)
 			   .where(station.id.eq(id))
-			   .fetchOne();
+			   .fetchOne();		
 		
 		
-		
-		if(item==null) return 0;
-	
+		if(item==null) return 0;	
 		
 		return item.get(device.totalNumber)-item.get(device.faultNumber)-item.get(device.usingNumber);
 		
+	}
+	
+	private ScanSeverExpressionMaps<StationStationInfo> selectList;
+	
+	@Override
+	protected JPAQuery<Tuple> createFullDslQuery() throws ScanElectricityException {
+		var station=QStationStationInfo.stationStationInfo;
+		var operator=QBaseOperator.baseOperator;
+		
+		try {
+			if (selectList == null) {
+				selectList=new ScanSeverExpressionMaps<>(station,StationStationInfo.class);
+				selectList.putItem("operator", operator.name);
+			}
+			
+			var query= factory.select(selectList.getExpressionArray())
+					.from(station)
+					.leftJoin(operator).on(station.operatorid.eq(operator.id))
+					;
+				
+				return selectList.addExtendsLeftJoin(query);
+		}catch(Exception ex) {
+			logger.error("创建查询条件失败:" + ex.getMessage(), ex);
+			throw new ScanElectricityException("创建查询条件失败:" + ex.getMessage(), ex);
+		}
+	}
+	
+	@Override
+	protected StationStationInfo fecthTupleIntoEntity(Tuple tuple) throws RuntimeException {
+		
+		try {
+			return selectList.fectionDataInItem(tuple);
+		} catch (IllegalAccessException ex) {
+			logger.error("处理查询失败:" + ex.getMessage(), ex);
+			throw new RuntimeException("处理查询失败:" + ex.getMessage(), ex);
+		}
 	}
 
 }

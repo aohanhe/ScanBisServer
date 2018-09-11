@@ -41,7 +41,8 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 
 	private byte status;
 	
-	
+	@Transient
+	private String operator;
 
 	public StationStationInfo() {
 	}
@@ -111,6 +112,16 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 
 	public void setStatus(byte status) {
 		this.status = status;
+	}
+
+
+	public String getOperator() {
+		return operator;
+	}
+
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 }

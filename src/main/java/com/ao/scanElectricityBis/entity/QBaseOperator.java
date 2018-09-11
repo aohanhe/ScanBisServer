@@ -38,6 +38,8 @@ public class QBaseOperator extends EntityPathBase<BaseOperator> {
 
     public final StringPath name = createString("name");
 
+    public final BooleanPath status = createBoolean("status");
+
     //inherited
     public final NumberPath<Integer> version = _super.version;
 

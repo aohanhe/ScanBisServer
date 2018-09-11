@@ -48,6 +48,23 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	private int usingNumber;
 	
 	
+	@Transient
+	private String regionCode;
+	
+	@Transient
+	private int operatorid;
+	
+	@Transient
+	private String operator;
+	@Transient
+	private String stationName;
+	
+	@Transient
+	private float  price;
+	
+	@Transient
+	private float  sharingScale;
+	
 
 	public StationDevice() {
 	}
@@ -121,5 +138,93 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	public void setUsingNumber(int usingNumber) {
 		this.usingNumber = usingNumber;
 	}
+
+
+
+	public String getRegionCode() {
+		return regionCode;
+	}
+
+
+
+	public void setRegionCode(String regionCode) {
+		this.regionCode = regionCode;
+	}
+
+
+
+	public int getOperatorId() {
+		return operatorid;
+	}
+
+
+
+	public void setOperatorId(int operatorId) {
+		this.operatorid = operatorId;
+	}
+
+
+
+	public String getOperator() {
+		return operator;
+	}
+
+
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+
+
+	public String getStationName() {
+		return stationName;
+	}
+
+
+
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+
+
+
+	public int getOperatorid() {
+		return operatorid;
+	}
+
+
+
+	public void setOperatorid(int operatorid) {
+		this.operatorid = operatorid;
+	}
+
+
+
+	public float getPrice() {
+		return price;
+	}
+
+
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+
+
+	public float getSharingScale() {
+		return sharingScale;
+	}
+
+
+
+	public void setSharingScale(float sharingScale) {
+		this.sharingScale = sharingScale;
+	}
+
+
+
+	
 
 }

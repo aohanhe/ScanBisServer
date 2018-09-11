@@ -17,6 +17,8 @@ public class BaseOperator extends BaseBisEntity implements Serializable {
 
 
 	private String name;
+	
+	private boolean status;
 
 	public BaseOperator() {
 	}
@@ -28,6 +30,16 @@ public class BaseOperator extends BaseBisEntity implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	public boolean isStatus() {
+		return status;
+	}
+
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 }
