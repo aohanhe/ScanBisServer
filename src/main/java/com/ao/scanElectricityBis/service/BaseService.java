@@ -12,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
@@ -53,14 +54,14 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 
 	@Autowired
 	protected Repository rep;
-	
+
 	protected Expression<?> mainExpression;
 
 	/**
 	 * querydsl构建工具
 	 */
 	protected JPAQueryFactory factory;
-	
+
 	@Autowired
 	protected QueryDslQueryHelper dslHelper;
 
@@ -68,7 +69,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	public void init() {
 		factory = new JPAQueryFactory(em);
 	}
-	
+
 	public BaseService(Expression<?> mainExpression) {
 		this.mainExpression = mainExpression;
 	}
@@ -116,6 +117,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 
 	/**
 	 * 分页查询条件数据
+	 * 
 	 * @param pager
 	 * @param initQuery
 	 * @return
@@ -131,7 +133,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 		var res = query.offset((pager.getPage() - 1) * pager.getSize()).limit(pager.getSize()).fetchResults();
 		var list = Flux.fromIterable(res.getResults()).map(this::fecthTupleIntoEntity);
 
-		var pageResult = new PagerResult<T>(pager.getPage(),pager.getSize(), res.getTotal(), list);
+		var pageResult = new PagerResult<T>(pager.getPage(), pager.getSize(), res.getTotal(), list);
 
 		return pageResult;
 	}
@@ -166,13 +168,28 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 	 */
 	protected T onSaveNew(T item) throws ScanElectricityException {
 
-		var reItem = rep.save(item);
+		try {
+			var reItem = rep.save(item);
 
-		var re = this.findItemById(item.getId(), item.getClass());
-		if (re == null)
-			return null;
+			var re = this.findItemById(item.getId(), item.getClass());
+			if (re == null)
+				return null;
 
-		return re.block();
+			return re.block();
+		} catch (Exception ex) {
+			String strFomat = "向数据库保存记录%s 失败:%s";
+			
+			if(ex instanceof DataIntegrityViolationException) {
+				strFomat = "向数据库保存记录失败:重复的键值:%s";
+				String message = String.format(strFomat, ex.getMessage());
+				logger.debug(message, ex);
+				throw new ScanElectricityKeyException(message, ex);
+			}
+
+			String message = String.format(strFomat, item.toString(), ex.getMessage());
+			logger.debug(message, ex);
+			throw new ScanElectricityException(message, ex);
+		}
 	}
 
 	/**
@@ -196,14 +213,16 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 			return re.block();
 
 		} catch (Exception ex) {
-			String strFomat = "向数据库保存新的记录%s 失败:%s";
-			/*if (ex.getCause() instanceof MySQLIntegrityConstraintViolationException) {
-				strFomat = "向数据库保存新的记录%s 失败:重复的键值:%s";
-				String message = String.format(strFomat, item.toString(), ex.getMessage());
+			String strFomat = "向数据库保存记录%s 失败:%s";
+			
+			if((ex instanceof DataIntegrityViolationException)||
+					(ex instanceof ScanElectricityKeyException)) {
+				strFomat = "向数据库保存记录失败:重复的键值:%s";
+				String message = String.format(strFomat,  ex.getMessage());
 				logger.debug(message, ex);
 				throw new ScanElectricityKeyException(message, ex);
 			}
-			*/
+
 			String message = String.format(strFomat, item.toString(), ex.getMessage());
 			logger.debug(message, ex);
 			throw new ScanElectricityException(message, ex);
@@ -242,9 +261,8 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 			return onSave(item);
 
 		} catch (Exception ex) {
-			String message = String.format("向数据库更新记录%s 失败:%s", item.toString(), ex.getMessage());
-			logger.debug(message, ex);
-			throw new ScanElectricityException(message, ex);
+			logger.debug(ex.getMessage(), ex);
+			throw new ScanElectricityException(ex.getMessage(), ex);
 		}
 
 	}
@@ -312,7 +330,7 @@ public class BaseService<T extends BaseOnlyIdEntity, Repository extends JpaRepos
 			var res = dslHelper.initPredicateAndSortFromQueryBean(query, queryBean).fetchResults();
 			var list = Flux.fromIterable(res.getResults()).map(this::fecthTupleIntoEntity);
 
-			var pageResult = new PagerResult<T>(queryBean.getPage(),queryBean.getLimit(), res.getTotal(), list);
+			var pageResult = new PagerResult<T>(queryBean.getPage(), queryBean.getLimit(), res.getTotal(), list);
 
 			return pageResult;
 

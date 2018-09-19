@@ -39,7 +39,7 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 	@Column(name="sharingscale")
 	private float sharingScale;
 
-	private byte status;
+	private boolean status;
 	
 	@Transient
 	private String operator;
@@ -106,11 +106,11 @@ public class StationStationInfo extends BaseBisEntity implements Serializable {
 		this.sharingScale = sharingScale;
 	}
 
-	public byte getStatus() {
+	public boolean getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 

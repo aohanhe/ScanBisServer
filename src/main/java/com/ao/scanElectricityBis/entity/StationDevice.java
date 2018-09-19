@@ -41,7 +41,7 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	@Column(name="stationid")
 	private int stationId;
 
-	private byte status;
+	private boolean status;
 	@Column(name="totalnumber")
 	private int totalNumber;
 	@Column(name="usingnumber")
@@ -115,11 +115,11 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 		this.stationId = stationId;
 	}
 
-	public byte getStatus() {
+	public boolean getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 

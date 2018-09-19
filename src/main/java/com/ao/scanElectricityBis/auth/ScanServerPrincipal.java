@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @author aohanhe
  *
  */
-@JsonSerialize()
-public class ScanServerPrincipal  implements IScanServerPrincipal{
+
+public class ScanServerPrincipal  implements IScanServerPrincipal,Serializable{
 	
 	
 	/**

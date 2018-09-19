@@ -13,52 +13,62 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 用户消息获取接口
+ * 
  * @author aohanhe
  *
  */
 @Service
 public class ScanServerPrincipalManger {
-	private static Logger logger=LoggerFactory.getLogger(ScanServerPrincipalManger.class);
-	
-	@Autowired(required=false)
+	private static Logger logger = LoggerFactory.getLogger(ScanServerPrincipalManger.class);
+
 	private static CurrentUserAware userAware;
-	
-	
-	private static ObjectMapper obMapper=new ObjectMapper();
-	
-	
+
+	private static ObjectMapper obMapper = new ObjectMapper();
+
 	@PostConstruct
-	public void init()
-	{
+	public void init() {
 		obMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
+
 	/**
 	 * 取得当前用户
+	 * 
 	 * @return
 	 */
 	public static IScanServerPrincipal getCurrentUser() {
-		if(userAware!=null)
+		if (userAware != null)
 			return userAware.currentUser();
-		
-		
-		Object pr=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+
+		Object pr = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		try {
-			return (IScanServerPrincipal) pr;
-		}catch(ClassCastException ex) {
-			try {
-				String value=obMapper.writeValueAsString(pr);
+			// 如果当前用户还没有登入过则对应的
+			if (!(pr instanceof String)) {
 				
-				var item= obMapper.readValue(value, ScanServerPrincipal.class);	
-				return item;
-			} catch (Exception e) {
-				logger.error("取得当前用户出错:"+e.getMessage(),e);
+					return (IScanServerPrincipal) pr;
 				
 			}
+
+			return null;
+
+		} catch (ClassCastException ex) {
+			try {
+				String value = obMapper.writeValueAsString(pr);
+
+				var item = obMapper.readValue(value, ScanServerPrincipal.class);
+				return item;
+			} catch (Exception e) {
+				logger.error("取得当前用户出错:" + e.getMessage(), e);
+
+			}
 		}
-		
-		
+
 		return null;
 	}
-	
+
+	@Autowired(required = false)
+	public void setUserAware(CurrentUserAware userAware) {
+		ScanServerPrincipalManger.userAware = userAware;
+	}
+
 }

@@ -46,7 +46,7 @@ public class QStationDevice extends EntityPathBase<StationDevice> {
 
     public final NumberPath<Integer> stationId = createNumber("stationId", Integer.class);
 
-    public final NumberPath<Byte> status = createNumber("status", Byte.class);
+    public final BooleanPath status = createBoolean("status");
 
     public final NumberPath<Integer> totalNumber = createNumber("totalNumber", Integer.class);
 

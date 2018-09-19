@@ -50,7 +50,7 @@ public class QStationStationInfo extends EntityPathBase<StationStationInfo> {
 
     public final NumberPath<Float> sharingScale = createNumber("sharingScale", Float.class);
 
-    public final NumberPath<Byte> status = createNumber("status", Byte.class);
+    public final BooleanPath status = createBoolean("status");
 
     //inherited
     public final NumberPath<Integer> version = _super.version;

@@ -64,11 +64,12 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 		mongItem.setStationId(item.getId());		
 		mongItem.setName(item.getName());
 		mongItem.setAddress(item.getAddress());
+		mongItem.setPrice(item.getPrice());
 
 		String[] strPos = item.getPoint().split(",");
 		mongItem.setPos(new Pos(Double.parseDouble(strPos[0]),Double.parseDouble(strPos[1])));
 		
-		mongoRep.insert(mongItem);
+		mongoRep.save(mongItem);
 		
 		return item;
 	}
@@ -84,12 +85,23 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 		mongItem.setStationId(item.getId());		
 		mongItem.setName(item.getName());
 		mongItem.setAddress(item.getAddress());
+		mongItem.setPrice(item.getPrice());
 
 		String[] strPos = item.getPoint().split(",");
 		mongItem.setPos(new Pos(Double.parseDouble(strPos[0]),Double.parseDouble(strPos[1])));
 		
-		mongoRep.save(mongItem);		
+		mongoRep.insert(mongItem);		
 		return item;
+	}
+	
+	/**
+	 * 删除站场信息
+	 */
+	@Override
+	protected void onDeleteItemById(int id) throws ScanElectricityException {		
+		super.onDeleteItemById(id);
+		//同时删除mongodb中对应的值 
+		mongoRep.deleteById(id);		
 	}
 	
 	/**
@@ -109,6 +121,7 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 				rItem.setAddress(item.getAddress());
 				rItem.setPoint(item.getPos().toString());
 				rItem.setName(item.getName());
+				rItem.setPrice(item.getPrice());
 				return rItem;
 			}).collectList().block()
 		;
@@ -133,7 +146,7 @@ public class StationService extends BaseService<StationStationInfo, StationRepos
 		
 		if(item==null) return 0;	
 		
-		return item.get(device.totalNumber)-item.get(device.faultNumber)-item.get(device.usingNumber);
+		return item.get(0, Integer.class)-item.get(1, Integer.class)-item.get(2, Integer.class);
 		
 	}
 	

@@ -2,6 +2,7 @@ package com.ao.scanElectricityBis.service;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -102,8 +103,9 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 				selectLists.putItem("operatorName", operator.name);
 
 			}
-			return factory.select(selectLists.getExpressionArray()).from(account).leftJoin(operator)
-					.on(account.operatorId.eq(operator.id));
+			return  selectLists.addExtendsLeftJoin(
+					factory.select(selectLists.getExpressionArray()).from(account).leftJoin(operator)
+					.on(account.operatorId.eq(operator.id)));
 		} catch (Exception ex) {
 			logger.error("创建查询指令出错:" + ex.getMessage(), ex);
 			throw new ScanElectricityException("创建查询指令出错:" + ex.getMessage(), ex);
@@ -118,6 +120,25 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 			logger.error("从结果中提取数据失败:" + e.getMessage(), e);
 			throw new RuntimeException("从结果中提取数据失败:" + e.getMessage(), e);
 		}
+	}
+	
+	/**
+	 * 更新用户的电话及密码
+	 * @param userId
+	 * @param phone
+	 * @param pwd
+	 * @throws ScanElectricityException
+	 */
+	@Transactional
+	public void updateUserPwdAndPhone(int userId,String phone,String pwd) throws ScanElectricityException {
+		var account = QBaseAccount.baseAccount;
+		var res=factory.update(account)
+			 .set(account.phone, phone)
+			 .set(account.pwd,pwd)
+			 .where(account.id.eq(userId))
+			 .execute();
+			
+		if(res<1) throw new ScanElectricityException("更新失败，没有记录被更新");
 	}
 
 }

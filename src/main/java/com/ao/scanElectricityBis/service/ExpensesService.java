@@ -115,7 +115,7 @@ public class ExpensesService extends BaseService<AccountExpense,AccountExpenseRe
 		var res=factory.select(expense.cost.sum(),expense.costminute.sum()).from(expense)
 		       .where(expense.userId.eq(id)).fetchOne();
 		
-		return Pair.of(res.get(expense.cost), res.get(expense.costminute));
+		return Pair.of(res.get(0,Float.class), res.get(1,Integer.class));
 	}
 	
 	@Override

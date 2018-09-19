@@ -73,7 +73,7 @@ public class UsersService extends BaseService<UserInfo, UserRepository> {
 	 * @throws ScanElectricityException
 	 */
 	@Transactional
-	public UserInfo getOrCreateItemByPhone(String userName, String phone, String openId) {
+	public UserInfo getOrCreateItemByPhone(String phone, String openId) {
 
 		// 如果原来存在这个电话的用户，则更新openid
 		var userInfo = QUserInfo.userInfo;
@@ -84,7 +84,7 @@ public class UsersService extends BaseService<UserInfo, UserRepository> {
 
 		} else {
 			item = new UserInfo();
-			item.setName(userName);
+			item.setName(phone);
 			item.setOpenid(openId);
 			item.setPhone(phone);
 			item.setPwd("");
