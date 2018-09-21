@@ -1,27 +1,54 @@
 package com.ao.scanElectricityBis.service;
 
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
 import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
+import com.ao.scanElectricityBis.entity.PlugInfoMongoEntity;
 import com.ao.scanElectricityBis.entity.QBaseOperator;
 import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.QStationPlugInfo;
 import com.ao.scanElectricityBis.entity.QStationStationInfo;
 import com.ao.scanElectricityBis.entity.StationPlugInfo;
+import com.ao.scanElectricityBis.repository.PlugInfoMongoRepository;
 import com.ao.scanElectricityBis.repository.PlugInfoRepository;
+import com.mongodb.DBObject;
+import com.mongodb.QueryBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import ao.jpaQueryHelper.SelectExpressionCollection;
 
 public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoRepository>{
 	private Logger logger=LoggerFactory.getLogger(PlugInfoService.class);
+	
+	public static final int PlugStatus_Free=0; //空闲	
+	public static final int PlugStatus_Working=1;//充电中
+	public static final int PlugStatus_WorkingAndLow=2;// 正在充电，但电流过小
+	public static final int PlugStatus_StopByOverFlow=3;//充电过流，已断开充电
+	public static final int PlugStatus_StopWaitContiue=4;//充电过程中，停过电，等待服务器下发指令是否继续恢复充电
+	public static final int PlugStatus_OtherFault=5;//其它错误
+	public static final int PlugStatus_CommFault=6;//对应此地址编号的插头通讯失败
+	
+
+	
 	
 	@Autowired
 	private EntityManager em;
@@ -31,6 +58,8 @@ public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoReposi
 	public PlugInfoService() {
 		super(QStationPlugInfo.stationPlugInfo);
 	}
+	
+	
 	
 	@Override
 	protected JPAQuery<Tuple> createFullDslQuery() throws ScanElectricityException {
@@ -69,18 +98,175 @@ public class PlugInfoService extends BaseService<StationPlugInfo, PlugInfoReposi
 		}
 		
 	}
+	/**
+	 * 转换mongodb的id值
+	 * @param deviceId
+	 * @param index
+	 * @return
+	 */
+	private long getPlugInfoMongoId(int deviceId,int index) {
+		return deviceId*1000+index;
+	}
 	
 	@Override
 	protected StationPlugInfo fecthTupleIntoEntity(Tuple tuple) throws RuntimeException {
 		
 		try {
-			return selectList.fectionDataInItem(tuple);
-		} catch (IllegalAccessException ex) {
+			var res=  selectList.fectionDataInItem(tuple);
+			
+			var item=this.plugRep.findById(res.getDeviceid()*1000+res.getDeviceindex());
+			if(item.isPresent()) {
+				res.setCurStatus(item.get().getStatus());
+				res.setLastUpTime(item.get().getLastUpTime());
+				res.setWorking(item.get().isWorking());
+			}
+			
+			return res;
+		} catch (Exception ex) {
 			logger.error("处理查询失败:" + ex.getMessage(), ex);
 			throw new RuntimeException("处理查询失败:" + ex.getMessage(), ex);
 		}
 	}
 	
+	@Override
+	protected StationPlugInfo onSave(StationPlugInfo item) throws ScanElectricityException {
+		
+		var res= super.onSave(item);
+		
+		updateDevicePlugNumber(item.getDeviceid());
+		
+		return res;
+	}
 	
+	@Override
+	protected StationPlugInfo onSaveNew(StationPlugInfo item) throws ScanElectricityException {
+		
+		var res = super.onSaveNew(item);
+		updateDevicePlugNumber(item.getDeviceid());
+		
+		return res;
+	}
+	
+	@Override
+	protected void onDeleteItemById(int id) throws ScanElectricityException {
+		var item=this.findItemById(id, StationPlugInfo.class).block();
+		super.onDeleteItemById(id);
+		updateDevicePlugNumber(item.getDeviceid());
+	}
+	
+	/**
+	 * 更新设备的插头数量
+	 * @param deviceId
+	 */
+	public void updateDevicePlugNumber(int deviceId) {
+		try {
+			var deivce=QStationDevice.stationDevice;
+			var pluginfo=QStationPlugInfo.stationPlugInfo;
+			
+			
+			int totalNumber=0;
+			int faultNumber=0;
+			
+			var res=factory.select(pluginfo.id.count(),pluginfo.isfault).from(pluginfo)
+			       .where(pluginfo.deviceid.eq(deviceId))
+			       .groupBy(pluginfo.isfault)
+			       .fetch();
+			       
+			for(var item:res) {
+				totalNumber+=item.get(0,Integer.class);
+				if(item.get(1,Boolean.class)) {
+					faultNumber+=item.get(0,Integer.class);
+				}
+			}
+					
+			factory.update(deivce)
+			   .set(deivce.totalNumber, totalNumber)
+			   .set(deivce.faultNumber, faultNumber)
+			   .execute();
+			
+		} catch (Exception ex) {
+			logger.error("更新设备插头数失败:" + ex.getMessage(), ex);
+			throw new RuntimeException("更新设备插头数失败:" + ex.getMessage(), ex);
+		}
+		
+	}
+	
+	@Autowired
+	private PlugInfoMongoRepository plugRep;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
+	
+	/**
+	 * 更新指定设备的指定次序的插头工作状态
+	 * @param deviceId
+	 * @param index
+	 * @param isWorking
+	 */
+	public void updatePlugStatus(int deviceId,int index,int  status) {
+				
+		
+		var query=QueryBuilder.start()
+			.and("id").is(getPlugInfoMongoId(deviceId,index))
+			.get();
+		var update=Update.update("status", status)
+				.update("lastUpTime", new Date())
+				.update("id", getPlugInfoMongoId(deviceId,index))
+				.update("deviceId", deviceId);
+		
+		
+		mongoTemplate.upsert(new BasicQuery((Document)query), update, PlugInfoMongoEntity.class);
+		
+	}
 
+	/**
+	 * 更新指定设备的指定次序的插头是否在工作中
+	 * @param deviceId
+	 * @param index
+	 * @param isWorking
+	 */
+	public void updatePlugIsWorking(int deviceId,int index,boolean isWorking) {
+			
+		
+		var query=QueryBuilder.start()
+				.and("id").is(getPlugInfoMongoId(deviceId,index))
+				.get();
+			var update=Update.update("isWorking", isWorking)
+					.update("lastUpTime", new Date())
+					.update("id", getPlugInfoMongoId(deviceId,index))
+					.update("deviceId", deviceId);			
+			var ops=CollectionOptions.empty();
+			
+			
+		mongoTemplate.upsert(new BasicQuery((Document)query), update, PlugInfoMongoEntity.class);
+	}
+	
+	/**
+	 * 取得插头信息通过设备ID及索引号
+	 * @param deviceId
+	 * @param index
+	 * @return
+	 * @throws ScanElectricityException 
+	 */
+	public StationPlugInfo getPlugByDeviceIdAndIndex(int deviceId,int index) throws ScanElectricityException {
+		var pluginfo=QStationPlugInfo.stationPlugInfo;
+		return this.findAllItems(query->{
+			return query.where(pluginfo.deviceid.eq(deviceId))
+					.where(pluginfo.deviceindex.eq(index));
+		}).blockFirst();
+	}
+	
+	/**
+	 * 通过code取得 plug
+	 * @param code
+	 * @return
+	 * @throws ScanElectricityException
+	 */
+	public StationPlugInfo findItemByCode(String code) throws ScanElectricityException {
+		var pluginfo=QStationPlugInfo.stationPlugInfo;
+		return this.findAllItems(query->{
+			return query
+					.where(pluginfo.code.eq(code));
+		}).blockFirst();
+	}
 }

@@ -35,7 +35,12 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 	private int costminute;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+	@Column(name="startdate")
+	private Date startDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="finishdate")
+	private Date finishDate;
 
 	private int plugid;
 
@@ -109,13 +114,7 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 		this.costminute = costminute;
 	}
 
-	public Date getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+	
 
 	public int getPlugid() {
 		return this.plugid;
@@ -148,6 +147,26 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 
 	public void setRegionCode(String regionCode) {
 		this.regionCode = regionCode;
+	}
+
+
+	public Date getFinishDate() {
+		return finishDate;
+	}
+
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+
+	public void setFinishDate(Date finishDate) {
+		this.finishDate = finishDate;
 	}
 
 

@@ -20,6 +20,11 @@ public class StationPlugInfo extends BaseBisEntity implements Serializable {
 	
 	private int deviceid;
 	
+	private boolean isfault;
+	
+	// 在设备中的位置
+	private int deviceindex;
+	
 	@Transient
 	private String deviceCode;
 	
@@ -43,6 +48,15 @@ public class StationPlugInfo extends BaseBisEntity implements Serializable {
 	
 	@Transient
 	private int operatorId;
+	
+	@Transient
+	private int curStatus;
+	
+	@Transient
+	private Date lastUpTime;
+	
+	@Transient
+	private boolean isWorking;
 	
 	
 	public StationPlugInfo() {
@@ -120,12 +134,54 @@ public class StationPlugInfo extends BaseBisEntity implements Serializable {
 		this.operator = operator;
 	}
 
+	public int getDeviceindex() {
+		return deviceindex;
+	}
+
+	public void setDeviceindex(int deviceindex) {
+		this.deviceindex = deviceindex;
+	}
+
+	
+
 	public int getOperatorId() {
 		return operatorId;
 	}
 
 	public void setOperatorId(int operatorId) {
 		this.operatorId = operatorId;
+	}
+
+	public boolean isIsfault() {
+		return isfault;
+	}
+
+	public void setIsfault(boolean isfault) {
+		this.isfault = isfault;
+	}
+
+	public int getCurStatus() {
+		return curStatus;
+	}
+
+	public void setCurStatus(int curStatus) {
+		this.curStatus = curStatus;
+	}
+
+	public Date getLastUpTime() {
+		return lastUpTime;
+	}
+
+	public void setLastUpTime(Date lastUpTime) {
+		this.lastUpTime = lastUpTime;
+	}
+
+	public boolean isWorking() {
+		return isWorking;
+	}
+
+	public void setWorking(boolean isWorking) {
+		this.isWorking = isWorking;
 	}
 
 }

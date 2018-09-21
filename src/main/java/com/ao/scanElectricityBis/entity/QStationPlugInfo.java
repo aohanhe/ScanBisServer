@@ -31,8 +31,12 @@ public class QStationPlugInfo extends EntityPathBase<StationPlugInfo> {
 
     public final NumberPath<Integer> deviceid = createNumber("deviceid", Integer.class);
 
+    public final NumberPath<Integer> deviceindex = createNumber("deviceindex", Integer.class);
+
     //inherited
     public final NumberPath<Integer> id = _super.id;
+
+    public final BooleanPath isfault = createBoolean("isfault");
 
     //inherited
     public final NumberPath<Integer> modifier = _super.modifier;

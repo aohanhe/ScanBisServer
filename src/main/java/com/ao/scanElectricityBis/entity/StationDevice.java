@@ -17,7 +17,6 @@ import java.util.Date;
 @NamedQuery(name="StationDevice.findAll", query="SELECT s FROM StationDevice s")
 public class StationDevice extends BaseBisEntity implements Serializable {
 	
-	
 
 	/**
 	 * 
@@ -41,12 +40,14 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	@Column(name="stationid")
 	private int stationId;
 
-	private boolean status;
+	private int status;
 	@Column(name="totalnumber")
 	private int totalNumber;
 	@Column(name="usingnumber")
 	private int usingNumber;
 	
+	@Column(name="lastuptime")
+	private Date lastUpTime;
 	
 	@Transient
 	private String regionCode;
@@ -115,11 +116,11 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 		this.stationId = stationId;
 	}
 
-	public boolean getStatus() {
+	public int getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
@@ -138,8 +139,6 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	public void setUsingNumber(int usingNumber) {
 		this.usingNumber = usingNumber;
 	}
-
-
 
 	public String getRegionCode() {
 		return regionCode;
@@ -173,6 +172,18 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
+	}
+
+
+
+	public Date getLastUpTime() {
+		return lastUpTime;
+	}
+
+
+
+	public void setLastUpTime(Date lastUpTime) {
+		this.lastUpTime = lastUpTime;
 	}
 
 

@@ -34,6 +34,8 @@ public class QStationDevice extends EntityPathBase<StationDevice> {
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
+    public final DateTimePath<java.util.Date> lastUpTime = createDateTime("lastUpTime", java.util.Date.class);
+
     public final StringPath localAdress = createString("localAdress");
 
     public final StringPath localPoint = createString("localPoint");
@@ -46,7 +48,7 @@ public class QStationDevice extends EntityPathBase<StationDevice> {
 
     public final NumberPath<Integer> stationId = createNumber("stationId", Integer.class);
 
-    public final BooleanPath status = createBoolean("status");
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
     public final NumberPath<Integer> totalNumber = createNumber("totalNumber", Integer.class);
 

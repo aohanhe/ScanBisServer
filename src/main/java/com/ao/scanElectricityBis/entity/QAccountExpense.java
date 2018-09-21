@@ -29,12 +29,14 @@ public class QAccountExpense extends EntityPathBase<AccountExpense> {
 
     public final NumberPath<Integer> costminute = createNumber("costminute", Integer.class);
 
-    public final DateTimePath<java.util.Date> created = createDateTime("created", java.util.Date.class);
+    public final DateTimePath<java.util.Date> finishDate = createDateTime("finishDate", java.util.Date.class);
 
     //inherited
     public final NumberPath<Integer> id = _super.id;
 
     public final NumberPath<Integer> plugid = createNumber("plugid", Integer.class);
+
+    public final DateTimePath<java.util.Date> startDate = createDateTime("startDate", java.util.Date.class);
 
     public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
 

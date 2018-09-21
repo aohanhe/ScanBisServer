@@ -1,5 +1,7 @@
 package com.ao.scanElectricityBis.service;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
@@ -10,10 +12,12 @@ import org.springframework.stereotype.Service;
 import com.ao.scanElectricityBis.base.ScanElectricityException;
 import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.BaseAccount;
+import com.ao.scanElectricityBis.entity.DeviceMongoEntry;
 import com.ao.scanElectricityBis.entity.QBaseOperator;
 import com.ao.scanElectricityBis.entity.QStationDevice;
 import com.ao.scanElectricityBis.entity.QStationStationInfo;
 import com.ao.scanElectricityBis.entity.StationDevice;
+import com.ao.scanElectricityBis.repository.DeviceMongoRepository;
 import com.ao.scanElectricityBis.repository.DeviceRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -27,6 +31,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 @Service
 public class DeviceService extends BaseService<StationDevice, DeviceRepository> {
 	private Logger logger=LoggerFactory.getLogger(DeviceService.class);
+	
+	public static final int DeviceStatus_Disable=1;
+	public static final int DeviceStatus_OnLine=2;
+	public static final int DeviceStatus_OfficeLine=3;
+	public static final int DeviceStatus_Fault=4;
 	
 	@Autowired
 	private EntityManager em;
@@ -83,16 +92,44 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository> 
 		
 	}
 	
+	@Autowired
+	private DeviceMongoRepository mongoRep;
+	
 	@Override
 	protected StationDevice fecthTupleIntoEntity(Tuple tuple) throws RuntimeException {
 		try {
-			return selectLists.fectionDataInItem(tuple);
+			var res= selectLists.fectionDataInItem(tuple);
+			
+			//取得mongodb中的状态
+			var item=mongoRep.findById(res.getId());
+			if(item.isPresent()) {
+				res.setStatus(item.get().getStatus());
+				res.setLastUpTime(item.get().getLastUpTime());
+			}
+			
+			return res;
+			
 		} catch (IllegalAccessException e) {
 			logger.error("从结果中提取数据失败:" + e.getMessage(), e);
 			throw new RuntimeException("从结果中提取数据失败:" + e.getMessage(), e);
 		}
 	}
 	
+	
+	/**
+	 * 更新设备的当前状态
+	 * @param deviceId
+	 * @param status
+	 * @throws ScanElectricityException 
+	 */
+	public void updateDeviceStatus(int deviceId,int status) throws ScanElectricityException {
+		var item=new DeviceMongoEntry();
+		item.setId(deviceId);
+		item.setLastUpTime(new Date());
+		item.setStatus(status);
+		
+		mongoRep.save(item);		
+	}
 		
 	
 	
