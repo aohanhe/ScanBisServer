@@ -18,9 +18,7 @@ import java.util.Date;
 @NamedQuery(name="AccountExpense.findAll", query="SELECT a FROM AccountExpense a")
 @NamedEntityGraph(name="AccountExpense.Join",includeAllAttributes=true)
 @QueryExpression("select o,u.userName from AccountExpense o left join UserInfo u ")
-public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
-	
-	
+public class AccountExpense extends BaseOnlyIdEntity implements Serializable {	
 	
 	private static final long serialVersionUID = 2388007214188422750L;
 
@@ -33,6 +31,8 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 	private float cost;
 
 	private int costminute;
+	
+	private int status;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="startdate")
@@ -147,6 +147,16 @@ public class AccountExpense extends BaseOnlyIdEntity implements Serializable {
 
 	public void setRegionCode(String regionCode) {
 		this.regionCode = regionCode;
+	}
+
+
+	public int getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 

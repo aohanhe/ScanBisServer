@@ -15,18 +15,14 @@ import java.util.Date;
 @Entity
 @Table(name="station_device")
 @NamedQuery(name="StationDevice.findAll", query="SELECT s FROM StationDevice s")
-public class StationDevice extends BaseBisEntity implements Serializable {
-	
+public class StationDevice extends BaseBisEntity implements Serializable {	
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5228031139857842384L;
 
-
-
 	private String code;
-
 	
 	@Column(name="faultnumber")
 	private int faultNumber;

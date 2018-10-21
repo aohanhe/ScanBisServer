@@ -44,7 +44,9 @@ public class AccountExpenseMongoEntity {
 	//计划充电时长
 	private int planMinute;
 	
-	private boolean isFinish;
+	// 订单状态
+	private int status;	
+	
 
 	public int getId() {
 		return id;
@@ -127,9 +129,7 @@ public class AccountExpenseMongoEntity {
 		this.cost = cost;
 	}
 
-	public boolean isFinish() {
-		return isFinish;
-	}
+	
 
 	public Date getStartDate() {
 		return startDate;
@@ -138,9 +138,14 @@ public class AccountExpenseMongoEntity {
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+	
 
-	public void setFinish(boolean isFinish) {
-		this.isFinish = isFinish;
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

@@ -38,6 +38,8 @@ public class QAccountExpense extends EntityPathBase<AccountExpense> {
 
     public final DateTimePath<java.util.Date> startDate = createDateTime("startDate", java.util.Date.class);
 
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
+
     public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
 
     //inherited

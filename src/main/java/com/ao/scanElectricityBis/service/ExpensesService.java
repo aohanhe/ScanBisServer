@@ -1,9 +1,10 @@
 package com.ao.scanElectricityBis.service;
 
-import static org.assertj.core.api.Assertions.from;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ao.OrderStates;
 import com.ao.scanElectricityBis.base.ScanElectricityException;
 import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
 import com.ao.scanElectricityBis.entity.AccountExpense;
@@ -75,7 +77,7 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 			return;
 
 		// 如果消费记录列表还没有创建，则创建它
-		CollectionOptions ops = CollectionOptions.empty().capped().maxDocuments(10000);
+		CollectionOptions ops = CollectionOptions.empty().maxDocuments(10000);
 
 		var collection = mongoTemplate.createCollection(CollectionName, ops);
 
@@ -193,7 +195,11 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 	@Transactional
 	public int createExpenseBill(int deviceId, int index, int userId, int planMinute) throws ScanElectricityException {
 		// 1 取得用户的帐户信息
-		var userInfo = usersService.findItemById(userId, UserInfo.class).block();
+		var userMono = usersService.findItemById(userId, UserInfo.class);
+
+		Assert.notNull(userMono, String.format("用户ID(%d)不存在", userId));
+
+		var userInfo = userMono.block();
 		var plugInfo = plugInfoService.getPlugByDeviceIdAndIndex(deviceId, index);
 		var deviceInfo = deviceService.findItemById(deviceId, StationDevice.class).block();
 
@@ -201,10 +207,10 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 			throw new ScanElectricityException(String.format("用户ID=%d的信息没有找到", userId));
 		if (deviceInfo == null)
 			throw new ScanElectricityException(String.format("设备ID=%d的信息没有找到", deviceId));
-		
-		//检查用户帐户是否足够余额
-		var cost=planMinute*deviceInfo.getPrice();
-		if(cost>userInfo.getMoney())
+
+		// 检查用户帐户是否足够余额
+		var cost = planMinute * deviceInfo.getPrice() / 60;
+		if (cost > userInfo.getMoney())
 			throw new ScanElectricityException("用户帐户余额不足");
 
 		// 创建帐单信息
@@ -217,6 +223,7 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 		expense.setPlugid(plugInfo.getId());
 		expense.setCost(0);
 		expense.setStartDate(null);
+		expense.setStatus(OrderStates.PendingStart.getStateId());
 
 		expense = this.saveItem(expense);
 
@@ -228,33 +235,50 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 		entity.setCostminute(0);
 		entity.setStartDate(null);
 		entity.setPlugid(plugInfo.getId());
-		
+
 		entity.setPlanMinute(planMinute);
 		entity.setLastUpdateTime(now);
 		entity.setPrice(deviceInfo.getPrice());
+		entity.setStatus(OrderStates.PendingStart.getStateId()); //设置订单待开始
 
-		mongoTemplate.insert(entity);
+		mongoTemplate.insert(entity, ExpensesService.CollectionName);
 
 		return expense.getId();
 	}
-	
+
 	/**
 	 * 设置帐单开始充电
+	 * 
 	 * @param billId
 	 */
+	@Transactional
 	public void upExpenseBillStart(int billId) {
-		var query = Criteria.where("id").is(billId);
-		var update = Update.update("lastUpdateTime", new Date())
-				.set("startDate", new Date());
+		var query = Criteria.where("_id").is(billId);
+		var update = Update.update("lastUpdateTime", new Date()).set("startDate", new Date())
+					.set("status", OrderStates.Charging.getStateId());
 		mongoTemplate.updateFirst(new Query(query), update, AccountExpenseMongoEntity.class,
 				ExpensesService.CollectionName);
-		
+
 		var expense = QAccountExpense.accountExpense;
-		var res=factory.update(expense)
-			.set(expense.startDate,new Date())
-			.where(expense.id.eq(billId))
-			.execute();
-		Assert.isTrue(res==1, "更新帐单失败,没有更新到记录");
+		var res = factory.update(expense).set(expense.startDate, new Date()).where(expense.id.eq(billId)).execute();
+		Assert.isTrue(res == 1, "更新帐单失败,没有更新到记录");
+	}
+	
+	/**
+	 * 暂停充电
+	 * @param billId
+	 */
+	@Transactional
+	public void pauseExpenseBill(int billId) {
+		var query = Criteria.where("_id").is(billId);
+		var update = Update.update("lastUpdateTime", new Date())
+				.set("status", OrderStates.Pausing.getStateId());
+		mongoTemplate.updateFirst(new Query(query), update, AccountExpenseMongoEntity.class,
+				ExpensesService.CollectionName);
+
+		var expense = QAccountExpense.accountExpense;
+		var res = factory.update(expense).set(expense.startDate, new Date()).where(expense.id.eq(billId)).execute();
+		Assert.isTrue(res == 1, "更新帐单失败,没有更新到记录");
 	}
 
 	/**
@@ -267,7 +291,7 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 	public AccountExpenseMongoEntity upExpenseBillCost(int billId, int costMinute) throws ScanElectricityException {
 
 		// 取得原始订单的单价
-		var query = Criteria.where("id").is(billId);
+		var query = Criteria.where("_id").is(billId);
 
 		var billEntity = mongoTemplate.findOne(new Query(query), AccountExpenseMongoEntity.class,
 				ExpensesService.CollectionName);
@@ -277,14 +301,29 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 		}
 
 		// 计算消费金额
-		float cost = billEntity.getPrice() * costMinute;
+		float cost = billEntity.getPrice() * costMinute / 60;
 
 		// 更新帐单的状态
 		var update = Update.update("lastUpdateTime", new Date()).inc("costminute", costMinute).inc("cost", cost);
 
 		mongoTemplate.updateFirst(new Query(query), update, AccountExpenseMongoEntity.class,
 				ExpensesService.CollectionName);
+
+		// 更新数据库订单信息
+		var expense = QAccountExpense.accountExpense;
+
+		var res = factory.update(expense).set(expense.afterMoney, expense.beforeMoney.add(-cost))
+				.set(expense.cost, cost).set(expense.costminute, (int) costMinute).set(expense.finishDate, new Date())
+				
+				.where(expense.id.eq(billId)).execute();
+
+		if (res <= 0)
+			throw new ScanElectricityException("完成帐单失败，没有数据被更新到");
+
+		
+
 		return mongoTemplate.findOne(new Query(query), AccountExpenseMongoEntity.class, ExpensesService.CollectionName);
+
 	}
 
 	/**
@@ -295,9 +334,10 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 	 * @return
 	 * @throws ScanElectricityException
 	 */
-	public AccountExpense finishExpenseBill(int billId, Integer costMinute) throws ScanElectricityException {
+	@Transactional
+	public void finishExpenseBill(int billId, Integer costMinute) throws ScanElectricityException {
 		// 取得原始订单的单价
-		var query = Criteria.where("id").is(billId);
+		var query = Criteria.where("_id").is(billId);
 
 		var billEntity = mongoTemplate.findOne(new Query(query), AccountExpenseMongoEntity.class,
 				ExpensesService.CollectionName);
@@ -305,36 +345,44 @@ public class ExpensesService extends BaseService<AccountExpense, AccountExpenseR
 		if (billEntity == null) {
 			throw new ScanElectricityException(String.format("编号为%d的帐单没有找到", billId));
 		}
-		
-		if(costMinute==null)
-			costMinute = (int) Duration.between(billEntity.getStartDate().toInstant(), (new Date()).toInstant()).toMinutes();
-		float cost = costMinute * billEntity.getPrice();
 
-		var update = Update.update("lastUpdateTime", new Date())
-				.set("cost", cost)
-				.set("costminute", costMinute)
-				.set("isFinish", true);
-		
-		//更新mongodb数据库
+		if (costMinute == null)
+			costMinute = (int) Duration.between(billEntity.getStartDate().toInstant(), (new Date()).toInstant())
+					.toMinutes();
+		float cost = costMinute * billEntity.getPrice() / 60;
+
+		var update = Update.update("lastUpdateTime", new Date()).set("cost", cost).set("costminute", costMinute)
+				.set("isFinish", true).set("status", OrderStates.Finished.getStateId());
+
+		// 更新mongodb数据库
 		mongoTemplate.updateFirst(new Query(query), update, AccountExpenseMongoEntity.class,
 				ExpensesService.CollectionName);
 		
-		//更新数据库订单信息
-		var expense = QAccountExpense.accountExpense;
-			
+		this.upExpenseBillCost(billId, costMinute);
 		
-		var res=factory.update(expense)
-			.set(expense.afterMoney, expense.beforeMoney.add(-cost))
-			.set(expense.cost, cost)
-			.set(expense.costminute,(int)costMinute)
-			.set(expense.finishDate, new Date())			
-			.where(expense.id.eq(billId))			
+		//更新帐单为结束
+		var exp=QAccountExpense.accountExpense;
+		var res=factory.update(exp)
+			.set(exp.status,OrderStates.Finished.getStateId())
+			.where(exp.id.eq(billId))
 			.execute();
+			
+		Assert.isTrue(res>0, String.format("更新id=%d帐单为结束失败，没有帐单被更新到", billId));
+	}
+	
+	/**
+	 * 取得所有设备ID对应的未完成订单对象列表
+	 * @return
+	 * @throws ScanElectricityException 
+	 */
+	public List<AccountExpense> getNotFinishItemByDeviceId(int deviceId) throws ScanElectricityException{
+		var expense = QAccountExpense.accountExpense;
+		var device=QStationDevice.stationDevice;
 		
-		if(res<=0)
-			throw new ScanElectricityException("完成帐单失败，没有数据被更新到");
-		
-		return this.findItemById(billId, AccountExpense.class).block();
+		return this.findAllItems(query->{
+			return query.where(device.id.eq(deviceId))
+					.where(expense.status.eq(OrderStates.Charging.getStateId()));
+		}).collect(Collectors.toList()).block();
 	}
 
 }

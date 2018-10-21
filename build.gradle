@@ -51,11 +51,11 @@ clean.doLast {
 		def entityFile = new File(entityFileName)
 
 		if(!entityFile.exists()) {
-			println '检测到以Q打头的文件['+file.name+']但不未检测的实体文件，跳过删除'
+			println 'finde start Q file ['+file.name+'] but not find entity，skip delete'
 			return;
 		}
 		
-		println '删除qsl的文件'+file.name
+		println 'delete qsl file'+file.name
 		file.delete();
 	}
 }

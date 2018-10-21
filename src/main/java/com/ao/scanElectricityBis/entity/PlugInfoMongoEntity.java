@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.persistence.Id;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 
 @Document
 public class PlugInfoMongoEntity {
@@ -13,11 +15,19 @@ public class PlugInfoMongoEntity {
 	
 	private int deviceId;
 	
+	private int deviceIndex;
+	
 	private int status;
 	
 	private Date lastUpTime;
 	
 	private boolean isWorking;
+	
+	/**
+	 * µ±«∞’ µ•∫≈
+	 */
+	@Indexed
+	private Integer curBillId;
 
 	public long getId() {
 		return id;
@@ -58,5 +68,23 @@ public class PlugInfoMongoEntity {
 	public void setWorking(boolean isWorking) {
 		this.isWorking = isWorking;
 	}
+
+	public Integer getCurBillId() {
+		return curBillId;
+	}
+
+	public void setCurBillId(Integer curBillId) {
+		this.curBillId = curBillId;
+	}
+
+	public int getDeviceIndex() {
+		return deviceIndex;
+	}
+
+	public void setDeviceIndex(int deviceIndex) {
+		this.deviceIndex = deviceIndex;
+	}
+
+	
 
 }

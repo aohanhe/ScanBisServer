@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.ao.scanElectricityBis.base.ScanElectricityException;
 import com.ao.scanElectricityBis.base.ScanSeverExpressionMaps;
@@ -37,8 +38,7 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository> 
 	public static final int DeviceStatus_OfficeLine=3;
 	public static final int DeviceStatus_Fault=4;
 	
-	@Autowired
-	private EntityManager em;
+	
 
 	public DeviceService() {
 		super(QStationDevice.stationDevice);
@@ -55,6 +55,8 @@ public class DeviceService extends BaseService<StationDevice, DeviceRepository> 
 	 */
 	public StationDevice findItemByCode(String code) throws ScanElectricityException {
 		var device = QStationDevice.stationDevice;
+		
+		Assert.notNull(code, "设备code值不允许为空");
 
 		return this.findAllItems(v -> {
 			return v.where(device.code.eq(code));
