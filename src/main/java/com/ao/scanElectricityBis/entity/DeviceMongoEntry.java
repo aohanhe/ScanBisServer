@@ -24,17 +24,19 @@ public class DeviceMongoEntry {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public Date getLastUpTime() {
+		return lastUpTime;
+	}
 	public int getStatus() {
 		return status;
 	}
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public Date getLastUpTime() {
-		return lastUpTime;
-	}
 	public void setLastUpTime(Date lastUpTime) {
 		this.lastUpTime = lastUpTime;
 	}
+	
 
 }

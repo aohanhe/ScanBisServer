@@ -105,7 +105,9 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 			}
 			return  selectLists.addExtendsLeftJoin(
 					factory.select(selectLists.getExpressionArray()).from(account).leftJoin(operator)
-					.on(account.operatorId.eq(operator.id)));
+					.on(account.operatorId.eq(operator.id))
+					
+					);
 		} catch (Exception ex) {
 			logger.error("创建查询指令出错:" + ex.getMessage(), ex);
 			throw new ScanElectricityException("创建查询指令出错:" + ex.getMessage(), ex);
@@ -140,5 +142,6 @@ public class AccountService extends BaseService<BaseAccount, AccountRepository> 
 			
 		if(res<1) throw new ScanElectricityException("更新失败，没有记录被更新");
 	}
+	
 
 }

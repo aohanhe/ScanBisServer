@@ -36,6 +36,7 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 	@Column(name="stationid")
 	private int stationId;
 
+	//�豸״̬
 	private int status;
 	@Column(name="totalnumber")
 	private int totalNumber;
@@ -112,13 +113,7 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 		this.stationId = stationId;
 	}
 
-	public int getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(int status) {
-		this.status = status;
-	}
+	
 
 	public int getTotalNumber() {
 		return this.totalNumber;
@@ -162,6 +157,18 @@ public class StationDevice extends BaseBisEntity implements Serializable {
 
 	public String getOperator() {
 		return operator;
+	}
+
+
+
+	public int getStatus() {
+		return status;
+	}
+
+
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 
